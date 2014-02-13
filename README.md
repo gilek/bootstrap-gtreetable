@@ -83,7 +83,7 @@ jQuery('#gtreetable').gtreetable({
 });
 ```
 
-User interface elements are in default shown in English. There is a possibility to change language by attaching appropriate files and defining language parameter:
+User interface elements are in default shown in English. There is a possibility to change language by attaching appropriate files and defining `language` parameter:
 
 ```html
 <script type="text/javascript" src="languages/bootstrap-gtreetable.pl.js"></script>
