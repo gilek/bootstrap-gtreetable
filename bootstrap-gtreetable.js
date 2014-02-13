@@ -132,7 +132,12 @@
 
             node.find('.node-name').click(function(){
                 self.$tree.find('.node-selected').removeClass('node-selected');
-                $(this).parents('.node').addClass('node-selected');
+				var node = $(this).parents('.node');
+                node.addClass('node-selected');
+				console.log(self.options.onSelect);
+				if ($.isFunction(self.options.onSelect)) {
+					self.options.onSelect(node);
+				}
             });
 
             node.find('.node-icon').click(function(e) {
@@ -199,7 +204,7 @@
         removeNode: function(node) {
             var self = this;
             if (node.hasClass('node-saved')) {
-                if (typeof self.options.onDelete === 'function')
+                if ($.isFunction(self.options.onDelete))
                     $.when(self.options.onDelete(node)).done(function(data){
                         delete self.cache[node.data('parent')];
                         if (!(node.prev('.node').data('parent') === node.data('parent') || node.next('.node').data('parent') === node.data('parent')))
@@ -231,7 +236,7 @@
         }, 
         saveNode: function(node) {
             var self = this;
-            if (typeof self.options.onSave === 'function')            
+            if ($.isFunction(self.options.onSave))            
                 $.when(self.options.onSave(node)).done(function(data){
                     delete self.cache[node.data('parent')];
                     var nodeAction = node.find('.node-action');
@@ -351,4 +356,4 @@
         },
 		loadingClass: 'node-loading'
     };
-}( window.jQuery );
+}( jQuery );
