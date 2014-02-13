@@ -24,7 +24,7 @@ Installing and configuration
 <table class="table gtreetable" id="gtreetable"><thead><tr><th>Category</th></tr></thead></table>
 ```
 
-3.Inside the `jQuery.onReady` method or directly after table definition, configure plugin:
+3.Inside the `jQuery.ready` method or directly after table definition, configure plugin:
 
 ```javascript
 jQuery('#gtreetable').gtreetable({
