@@ -136,7 +136,7 @@
                 node.addClass('node-selected');
 				console.log(self.options.onSelect);
 				if ($.isFunction(self.options.onSelect)) {
-					self.options.onSelect(node);
+					self.options.onSelect(node, self);
 				}
             });
 
