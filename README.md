@@ -46,7 +46,7 @@ Schema of the transmitted data (JSON) is presented by the following example:
 ```
 
 GTreetable allows also for performing an action, in the moment of saving node sate, as well as during operation removal.
-Following parameters are responsible for that: `onSave` and `onDelete`. Both need to return jQuery.ajax type object. 
+Following parameters are responsible for that: `onSave` and `onDelete`. Both need to return `jQuery.ajax` type object. 
 
 ```javascript
 jQuery('#gtreetable').gtreetable({
