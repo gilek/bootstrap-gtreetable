@@ -6,7 +6,7 @@ It is possible to indicate tree node position and execute CRUD operation on it.
 
 See [live demo](http://gtreetable.gilek.net).
 
-![](http://gtreetable.gilek.net/assets/gtreetable.png)
+![](http://gtreetable.gilek.net/assets/gtreetable-demo.png)
 
 Installing and configuration
 --------------------------
