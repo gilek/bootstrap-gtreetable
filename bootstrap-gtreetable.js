@@ -119,7 +119,7 @@
             node.data('parent',data.parent);
             node.data('level',data.level);
 
-            node.find('.node-indent').css('marginLeft',(parseInt(data.level) * 16)+'px');  
+            node.find('.node-indent').css('marginLeft',(parseInt(data.level) * 16)+'px').html('&zwnj;');  
 
             node.mouseover(function() {
                $(this).addClass('node-hovered');
