@@ -1,5 +1,5 @@
 /* =========================================================
- * bootstrap-gtreetable.js
+ * bootstrap-gtreetable.js 1.1a
  * http://gtreetable.gilek.net
  * =========================================================
  * Copyright 2014 Maciej "Gilek" Kłak
@@ -20,42 +20,47 @@
 !function($) {
     var GTreeTable = function(element, options) {
 
-        this.options = $.extend($.fn.gtreetable.defaults, options);
+        this.options = $.extend({},$.fn.gtreetable.defaults, options);
+        
         var lang = this.options.languages[this.options.language] === undefined ?
                 this.options.languages['en'] :
                 this.options.languages[this.options.language];
 
         if (this.options.template === undefined) {
             this.options.template = '<table class="table gtreetable">' +
-                    '<tr class="node node-collapsed">' +
-                    '<td>' +
+            '<tr class="node node-collapsed">' +
+                '<td>' +
                     '<span><span class="node-indent"></span><i class="node-icon glyphicon glyphicon-chevron-right"></i><i class="node-icon-selected glyphicon glyphicon-ok"></i><span class="node-name"></span></span>' +
                     '<span class="hide node-action">' +
-                    '<input type="text" name="name" value="" class="form-control" />' +
-                    '<button type="button" class="btn btn-sm btn-primary node-save">' + lang.save + '</button> ' +
-                    '<button type="button" class="btn btn-sm node-saveCancel">' + lang.cancel + '</button>' +
+                        '<input type="text" name="name" value="" style="width: '+ this.options.inputWidth +'" class="form-control" />' +
+                        '<button type="button" class="btn btn-sm btn-primary node-save">' + lang.save + '</button> ' +
+                        '<button type="button" class="btn btn-sm node-saveCancel">' + lang.cancel + '</button>' +
                     '</span>' +
                     '<div class="btn-group pull-right">' +
                     '<button type="button" class="btn btn-sm btn-default dropdown-toggle node-actions" data-toggle="dropdown">' +
-                    lang.action + ' <span class="caret"></span>' +
+                        lang.action + ' <span class="caret"></span>' +
                     '</button>' +
                     '<ul class="dropdown-menu" role="menu">' +
-                    '<li role="presentation" class="dropdown-header">' + lang.action + '</li>' +
-                    '<li role="presentation"><a href="#notarget" class="node-create" tabindex="-1">' + lang.actionAdd + '</a></li>' +
-                    '<li role="presentation"><a href="#notarget" class="node-update" tabindex="-1">' + lang.actionEdit + '</a></li>' +
-                    '<li role="presentation"><a href="#notarget" class="node-delete" tabindex="-1">' + lang.actionDelete + '</a></li>' +
+                        '<li role="presentation" class="dropdown-header">' + lang.action + '</li>' +
+                        '<li role="presentation"><a href="#notarget" class="node-create" tabindex="-1">' + lang.actionAdd + '</a></li>' +
+                        '<li role="presentation"><a href="#notarget" class="node-update" tabindex="-1">' + lang.actionEdit + '</a></li>' +
+                        '<li role="presentation"><a href="#notarget" class="node-delete" tabindex="-1">' + lang.actionDelete + '</a></li>' +
                     '</ul>' +
                     '</div>' +
-                    '</td>' +
-                    '</tr>' +
-                    '</table>';
+                '</td>' +
+                '</tr>' +
+            '</table>';
         }
-
+        
         this.cache = new Array();
 
         this.$tree = element;
         if (!this.$tree.find('tbody').length === 0)
             this.$tree.append('<tbody></tbody>');
+
+        if (!this.options.readonly) {
+            this.$tree.addClass('gtreetable-fullAccess');
+        }
 
         this.$nodeTemplate = $(this.options.templateSelector ? this.options.templateSelector : this.options.template).find('.node');
     };
@@ -64,17 +69,15 @@
         init: function(id) {
             this.fillNodes(id === undefined ? 0 : id, this);
         },
-        getNodePrefix: function() {
-            return this.options.nodePrefix;
-        },
+
         getNode: function(id) {
-            return this.$tree.find('.' + this.getNodePrefix() + id);
+            return this.$tree.find('.node' + id);
         },
         getNodeLastChild: function(parentId) {
             var last = undefined;
             $.each(this.getNode(parentId).nextAll('.node'), function(key, node) {
                 var node = $(node);
-                if (node.data('parent') == parentId) {
+                if (node.data('parent')===parentId) {
                     last = node;
                 } else {
                     return last;
@@ -98,8 +101,8 @@
             var path = [node.find('.node-name').html()]
                     , parent = node.data('parent');
             node.prevAll('.node').each(function() {
-                $this = $(this);
-                if ($this.data('id') == parent) {
+                var $this = $(this);                
+                if ($this.data('id')===parent) {
                     parent = $this.data('parent');
                     path[path.length] = $this.find('.node-name').html();
                 }
@@ -208,7 +211,6 @@
                     $.when(self.options.onDelete(node)).done(function(data) {
                         delete self.cache[node.data('parent')];
                         if (!(node.prev('.node').data('parent') === node.data('parent') || node.next('.node').data('parent') === node.data('parent')))
-                            // jesli ostatni
                             self.collapseNode(node.data('parent'));
                         else
                             self._removeNode(node.data('id'));
@@ -244,7 +246,7 @@
                     nodeAction.addClass('hide');
                     if (!node.hasClass('node-saved')) {
                         node.data('id', data.id);
-                        node.addClass(self.getNodePrefix() + data.id);
+                        node.addClass('node' + data.id);
                         node.addClass('node-saved');
                     }
                 });
@@ -271,12 +273,12 @@
                 this.getNode(id).removeClass('node-collapsed').addClass('node-expanded');
                 this.fillNodes(id, options);
             } else
-            if (options && typeof options.onAfterFill == 'function')
+            if (options && typeof options.onAfterFill==='function')
                 options.onAfterFill(this);
         },
         fillNodes: function(parentId, options) {
             var self = this;
-            if (self.cache[parentId] && !options.isAltPressed) {
+            if (self.options.cache && self.cache[parentId] && !options.isAltPressed) {
                 self._fillNodes(parentId, options);
             } else {
                 $.when(self.getSourceNodes(parentId, self)).done(function(data) {
@@ -292,7 +294,7 @@
                     node.find('.node-icon').css('visibility', 'hidden');
                 this.appendNode(node);
             }
-            if (options && typeof options.onAfterFill == 'function')
+            if (options && typeof options.onAfterFill==='function')
                 options.onAfterFill(this);
 
             var parent = this.getNode(parentId);
@@ -339,7 +341,7 @@
     };
 
     $.fn.gtreetable.defaults = {
-        nodePrefix: 'node',
+        nodeIndent: 16,
         language: 'en',
         languages: {
             en: {
@@ -352,6 +354,8 @@
             }
         },
         loadingClass: 'node-loading',
-        nodeIndent: 16
+        inputWidth: '60%',
+        readonly: false,
+        cache: true
     };
 }(jQuery);
