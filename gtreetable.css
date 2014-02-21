@@ -10,6 +10,6 @@
 }
 .gtreetable .node-hovered .node-icon { opacity: 0.6; }
 .gtreetable .node-actions { visibility: hidden; }
-.gtreetable .node-hovered.node-saved .node-actions, .node-selected.node-saved .node-actions { visibility: visible; }
+.gtreetable.gtreetable-fullAccess .node-hovered.node-saved .node-actions, .gtreetable.gtreetable-fullAccess .node-selected.node-saved .node-actions { visibility: visible; }
 .gtreetable .node-selected .node-icon-selected { display: inline-block; }
 .gtreetable  input { display:inline; margin-right: 4px; width:60%; height: 28px; padding: 3px 6px;  }
