@@ -1,5 +1,5 @@
 /* =========================================================
- * bootstrap-gtreetable.js 1.1a
+ * bootstrap-gtreetable.js 1.2a
  * http://gtreetable.gilek.net
  * =========================================================
  * Copyright 2014 Maciej "Gilek" Kłak
@@ -27,7 +27,8 @@
                 this.options.languages[this.options.language];
 
         if (this.options.template === undefined) {
-            this.options.template = '<table class="table gtreetable">' +
+        
+            var template = '<table class="table gtreetable">' +
             '<tr class="node node-collapsed">' +
                 '<td>' +
                     '<span><span class="node-indent"></span><i class="node-icon glyphicon glyphicon-chevron-right"></i><i class="node-icon-selected glyphicon glyphicon-ok"></i><span class="node-name"></span></span>' +
@@ -41,15 +42,27 @@
                         lang.action + ' <span class="caret"></span>' +
                     '</button>' +
                     '<ul class="dropdown-menu" role="menu">' +
-                        '<li role="presentation" class="dropdown-header">' + lang.action + '</li>' +
-                        '<li role="presentation"><a href="#notarget" class="node-create" tabindex="-1">' + lang.actionAdd + '</a></li>' +
-                        '<li role="presentation"><a href="#notarget" class="node-update" tabindex="-1">' + lang.actionEdit + '</a></li>' +
-                        '<li role="presentation"><a href="#notarget" class="node-delete" tabindex="-1">' + lang.actionDelete + '</a></li>' +
-                    '</ul>' +
+                        '<li role="presentation" class="dropdown-header">' + lang.action + '</li>';
+                
+            this.actions = new Array();
+            if (this.options.defaultActions!==null) 
+                this.actions = this.options.defaultActions;
+        
+            if (this.options.actions!==undefined) 
+                this.actions.push.apply(this.actions, this.options.actions);
+            
+            $.each(this.actions, function(index,action) {
+                var matches = action.name.match(/\{(.+)\}/);
+                var name = matches!==null && matches[1]!==undefined && lang[matches[1]]!==undefined ? lang[matches[1]] : action.name;
+                template += '<li role="presentation"><a href="#notarget" class="node-action-'+index+'" tabindex="-1">' + name + '</a></li>';
+            }); 
+                     
+            template += '</ul>' +
                     '</div>' +
                 '</td>' +
                 '</tr>' +
             '</table>';
+            this.options.template = template;
         }
         
         this.cache = new Array();
@@ -152,27 +165,10 @@
                     self.collapseNode(data.id);
             });
 
-            node.find('.node-create').click(function() {
-                var parent = $(this).parents('.node');
-                parent.find('.node-icon').css('visibility', 'visible');
-                var node = self.renderNode({
-                    'level': parseInt(parent.data('level')) + 1,
-                    'parent': parent.data('id')
+            $.each(this.actions, function(index,action) {
+                node.find('.node-action-'+index).click(function() {
+                    action.event(node,self);
                 });
-                node.find('.node-action').removeClass('hide');
-                self.expandNode(node.data('parent'), {
-                    'onAfterFill': function(self) {
-                        self.appendNode(node);
-                    }
-                });
-            });
-
-            node.find('.node-update').click(function() {
-                self.updateNode(node.data('id'));
-            });
-
-            node.find('.node-delete').click(function() {
-                self.removeNode(node);
             });
 
             node.find('.node-save').click(function() {
@@ -196,13 +192,25 @@
                 last.after(node);
             }
         },
-        updateNode: function(id) {
-            var node = this.getNode(id);
+        addNode: function(node) {
+            var self = this;
+            node.find('.node-icon').css('visibility', 'visible');
+            var newNode = self.renderNode({
+                'level': parseInt(node.data('level')) + 1,
+                'parent': node.data('id')
+            });
+            newNode.find('.node-action').removeClass('hide');
+            self.expandNode(newNode.data('parent'), {
+                'onAfterFill': function(self) {
+                    self.appendNode(newNode);
+                }
+            });    
+        },
+        updateNode: function(node) {
             var nodeName = node.find('.node-name');
             node.find('input').val(nodeName.html());
             nodeName.addClass('hide');
             node.find('.node-action').removeClass('hide');
-
         },
         removeNode: function(node) {
             var self = this;
@@ -238,7 +246,7 @@
         },
         saveNode: function(node) {
             var self = this;
-            if ($.isFunction(self.options.onSave))
+            if ($.isFunction(self.options.onSave)) 
                 $.when(self.options.onSave(node)).done(function(data) {
                     delete self.cache[node.data('parent')];
                     var nodeAction = node.find('.node-action');
@@ -353,6 +361,26 @@
                 actionDelete: 'Delete'
             }
         },
+        defaultActions: [
+            {
+                name: '{actionAdd}',
+                event: function(node, object) {
+                    object.addNode(node);
+                }
+            },
+            {
+                name: '{actionEdit}',
+                event: function(node, object) {
+                    object.updateNode(node);
+                }
+            },
+            {
+                name: '{actionDelete}',
+                event: function(node, object) {
+                    object.removeNode(node);
+                }
+            }                    
+        ],        
         loadingClass: 'node-loading',
         inputWidth: '60%',
         readonly: false,
