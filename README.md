@@ -8,7 +8,7 @@ See [live demo](http://gtreetable.gilek.net).
 
 ![](http://gtreetable.gilek.net/assets/gtreetable-demo.png)
 
-Installing and configuration
+Installing
 --------------------------
 1.First of all - attach required JavaScript and CSS files:
 
@@ -96,3 +96,25 @@ jQuery('#gtreetable').gtreetable({
     }
 });
 ```
+
+
+Configuration
+=============
+
+Properties
+----------
++ `nodeIndent` (integer)
++ `language` (string)
++ `languages` (object)
++ `defaultActions` (array)
++ `actions` (array)
++ `loadingClass` (string)
++ `inputWidth` (string)
++ `readonly` (boolean)
++ `cache ` (boolean)
+
+Events
+------
++ `onSave` callback(node)
++ `onDelete` callback(node)
++ `onSelect` callback(node, object)
