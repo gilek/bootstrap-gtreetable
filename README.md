@@ -99,10 +99,10 @@ jQuery('#gtreetable').gtreetable({
 
 
 Configuration
-=============
+------------
 
-Properties
-----------
+### Properties
+
 + `nodeIndent` (integer)
 + `language` (string)
 + `languages` (object)
@@ -113,8 +113,7 @@ Properties
 + `readonly` (boolean)
 + `cache ` (boolean)
 
-Events
-------
+### Events
 + `onSave` callback(node)
 + `onDelete` callback(node)
 + `onSelect` callback(node, object)
