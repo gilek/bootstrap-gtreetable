@@ -8,7 +8,7 @@ See [live demo](http://gtreetable.gilek.net).
 
 ![](http://gtreetable.gilek.net/assets/gtreetable-demo.png)
 
-Installing
+Installation
 --------------------------
 1.First of all - attach required JavaScript and CSS files:
 
@@ -103,17 +103,25 @@ Configuration
 
 ### Properties
 
-+ `nodeIndent` (integer)
-+ `language` (string)
-+ `languages` (object)
-+ `defaultActions` (array)
-+ `actions` (array)
-+ `loadingClass` (string)
-+ `inputWidth` (string)
-+ `readonly` (boolean)
-+ `cache ` (boolean)
++ `nodeIndent` (integer) - Distance between node and its container. The value is multiplied, depending on node level.
++ `language` (string) - Language of displaying user interface elements.
++ `languages` (object) - Contain translations of user interface elements.
++ `defaultActions` (array) - List of default node actions. If it`s set on null, default actions won't be displaying.
++ `actions` (array) - Additional node actions, displayed after default actions. Position in array should be an object in following format:
+
+	```
+	{
+	    name: 'name',
+	    event: function(node, object) {}
+	}
+	```
+
++ `loadingClass` (string) - Additional class name, adding to the node at the child loading moment.
++ `inputWidth` (string) - Text input width.
++ `readonly` (boolean) - Determines whether executing action on node is possible or not.
++ `cache ` (boolean) - Determines whether downloaded children can be stored in cache or not.
 
 ### Events
-+ `onSave` callback(node)
-+ `onDelete` callback(node)
-+ `onSelect` callback(node, object)
++ `onSave` callback(node) - Function triggering at the node adding / edition moment. It must return `jQuery.ajax` object.
++ `onDelete` callback(node) - Function triggering at the node deleting moment. It must return `jQuery.ajax` object.
++ `onSelect` callback(node, object) - Function triggering at the node selecting moment.
