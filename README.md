@@ -6,6 +6,8 @@ It is possible to indicate tree node position and execute CRUD operation on it.
 
 See [live demo](http://gtreetable.gilek.net).
 
+You can also see [Yii-GTreeTable](http://www.yiiframework.com/extension/gtreetable/), PHP back-end for Yii Framework.
+
 ![](http://gtreetable.gilek.net/assets/gtreetable-demo.png)
 
 Installation
