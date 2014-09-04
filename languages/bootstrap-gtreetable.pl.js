@@ -24,6 +24,7 @@
         action: 'Akcja',
         actionAdd: 'Dodaj',
         actionEdit: 'Edytuj',
-        actionDelete: 'Usuń'        
+        actionDelete: 'Usuń',
+        deleteConfirm: 'Czy na pewno?'        
     };
 }( jQuery ));
