@@ -524,11 +524,13 @@
             return this.movePosition;
         },
         
-        setMovePosition: function(position) {
-            this.$node.removeClass(this.manager.options.classes.draggableBefore + ' ' + this.manager.options.classes.draggableAfter + ' ' + this.manager.options.classes.draggableLastChild);
+        setMovePosition: function(position, pointerOffset) {
+            this.$node.removeClass(this.manager.options.classes.draggableContainer);
             if (position !== undefined) {
-                this.$node.addClass(this.manager.options.classes.draggable + '-' + position);
+                this.$node.addClass(this.manager.options.classes.draggableContainer);
                 this.movePosition = position;
+                this.$pointer.css('top', pointerOffset.top + 'px');
+                this.$pointer.css('left', pointerOffset.left + 'px');
             }
         },
 
@@ -563,6 +565,7 @@
             this.$saveButton = this.$node.find('.' + this.manager.options.classes.saveButton);
             this.$cancelButton = this.$node.find('.' + this.manager.options.classes.cancelButton);      
             this.$input = this.$node.find('input');      
+            this.$pointer = this.$node.find('.' + this.manager.options.classes.draggablePointer);
             
             this.render();
             this.attachEvents();
@@ -667,17 +670,29 @@
             });
             
             if (that.manager.options.draggable === true) {
-                function getPosition(ui, $droppable) {
-                    var height = $droppable.outerHeight() -(ui.helper.outerHeight() / 2),
-                        offset = ui.offset.top - $droppable.offset().top;
-                    
-                    if (offset  <= (height * 0.3)) {
-                        return 'before';
-                    } else if (offset  <= (height * 0.7)) {
-                        return 'lastChild';
+                function getMoveData(ui, $droppable) {
+                    var draggableOffsetTop = ui.offset.top - $droppable.offset().top,
+                        containerOffsetTop = $droppable.offset().top,
+                        containerHeight = $droppable.outerHeight(),
+                        containerWorkspace = containerHeight - (ui.helper.outerHeight() / 2),
+                        movePosition = undefined,
+                        pointerOffset = {left: that.manager.$tree.offset().left + 5 };
+
+
+                    if (draggableOffsetTop  <= (containerWorkspace * 0.3)) {
+                        movePosition = 'before'; 
+                        pointerOffset.top = (containerOffsetTop + 3); 
+                    } else if (draggableOffsetTop  <= (containerWorkspace * 0.7)) {
+                        movePosition = 'lastChild';
+                        pointerOffset.top = containerOffsetTop + Math.round(containerWorkspace / 2);
                     } else {
-                        return 'after';
+                        movePosition = 'after';
+                        pointerOffset.top = containerOffsetTop + containerWorkspace - 3;
                     }                    
+                    return {
+                        position: movePosition,
+                        pointerOffset: pointerOffset
+                    };
                 }
              
                 this.$node
@@ -691,27 +706,32 @@
                         cursorAt: {top:0, left: 0 },
                         handle: '.'+ that.manager.options.classes.handleIcon,
                         start: function (e) {
-                            $(this).data("bs.gtreetable.gtreetablenode.startingScrollTop",window.pageYOffset);
-                            that.manager.isNodeDragging(true);
+                            if (!$.browser.webkit) $(this).data("bs.gtreetable.gtreetablenode.scrollTop", $(window).scrollTop());
                         },
                         stop: function (e) {
                             that.manager.isNodeDragging(false);
                         },
                         drag: function (e, ui) {
-                            var st = parseInt($(this).data("bs.gtreetable.gtreetablenode.startingScrollTop"));
-                            ui.position.top -= st;
-                            
+                            if (!$.browser.webkit) {
+                                var strollTop =  $(window).scrollTop(),
+                                    delta = ($(this).data("bs.gtreetable.gtreetablenode.scrollTop") - strollTop);
+
+                                ui.position.top -= strollTop + delta;
+                                $(this).data("bs.gtreetable.gtreetablenode.startingScrollTop", strollTop);
+                            }
                             var $droppable = $(this).data("bs.gtreetable.gtreetablenode.currentDroppable");
                             if ($droppable) {
-                                that.manager.getNode($droppable).setMovePosition(getPosition(ui, $droppable));
+                                var data = getMoveData(ui, $droppable);
+                                that.manager.getNode($droppable).setMovePosition(data.position, data.pointerOffset);
                             }                            
                         }
                     })
                     .droppable({
                         accept: '.' + that.manager.options.classes.node,
                         over: function(event, ui) {
-                            var $this = $(this);
-                            that.manager.getNode($this).setMovePosition(getPosition(ui, $this));
+                            var $this = $(this),
+                                data = getMoveData(ui, $this);
+                            that.manager.getNode($this).setMovePosition(data.position, data.pointerOffset);
                             ui.draggable.data("bs.gtreetable.gtreetablenode.currentDroppable", $this);
                         },
                         out: function(event, ui) {
@@ -928,9 +948,7 @@
             draggable : 'node-draggable',
             draggableHelper : 'node-draggable-helper',
             draggablePointer : 'node-draggable-pointer',
-            draggableBefore : 'node-draggable-before',
-            draggableAfter : 'node-draggable-after',
-            draggableLastChild : 'node-draggable-lastChild',
+            draggableContainer : 'node-draggable-container',
             saved: 'node-saved',
             name: 'node-name',
             icon: 'node-icon',            

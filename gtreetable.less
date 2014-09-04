@@ -1,6 +1,4 @@
 @gtreetable-line-height: max(28px, convert(@line-height-computed,px));
-
-.gtreetable .node { position: relative; }
 /* copy of .glyphicon */
 .gtreetable .icon {
     .glyphicon();
@@ -48,26 +46,5 @@
     transform:rotate(-90deg); 
 }
 
-.gtreetable .node-draggable-before, 
-    .gtreetable .node-draggable-after, 
-    .gtreetable .node-draggable-lastChild { background-color: @table-bg-hover; }
-
-.gtreetable-node-draggable-position() { visibility: visible; }
-    
-.node-draggable-before .node-draggable-pointer {
-    .gtreetable-node-draggable-position();
-    top:0;
-    left:5px;
-}
-
-.node-draggable-after .node-draggable-pointer {
-    .gtreetable-node-draggable-position();
-    bottom: 0px;
-    left:5px;
-}
-
-.node-draggable-lastChild .node-draggable-pointer {
-    .gtreetable-node-draggable-position();
-    top: unit(ceil((unit(@gtreetable-line-height)+unit(@table-cell-padding))/2),px);
-    left:5px;    
-}
+.node-draggable-container { background-color: @table-bg-hover;}
+.node-draggable-container .node-draggable-pointer { visibility: visible; }

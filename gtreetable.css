@@ -1,6 +1,3 @@
-.gtreetable .node {
-  position: relative;
-}
 /* copy of .glyphicon */
 .gtreetable .icon {
   position: relative;
@@ -95,23 +92,9 @@
   border-left: 6px solid transparent;
   transform: rotate(-90deg);
 }
-.gtreetable .node-draggable-before,
-.gtreetable .node-draggable-after,
-.gtreetable .node-draggable-lastChild {
-  background-color: #f5f5f5;
+.node-draggable-container {
+  background-color: #f5f5f5; 
 }
-.node-draggable-before .node-draggable-pointer {
+.node-draggable-container .node-draggable-pointer {
   visibility: visible;
-  top: 0;
-  left: 5px;
-}
-.node-draggable-after .node-draggable-pointer {
-  visibility: visible;
-  bottom: 0px;
-  left: 5px;
-}
-.node-draggable-lastChild .node-draggable-pointer {
-  visibility: visible;
-  top: 18px;
-  left: 5px;
 }
