@@ -22,7 +22,10 @@
         save: 'Zapisz',
         cancel: 'Anuluj',
         action: 'Akcja',
-        actionAdd: 'Dodaj',
+        actionAddBefore: 'Dodaj przed',
+        actionAddAfter: 'Dodaj po',
+        actionAddFirstChild: 'Dodaj pierwszy',
+        actionAddLastChild: 'Dodaj ostatni',
         actionEdit: 'Edytuj',
         actionDelete: 'Usuń',
         deleteConfirm: 'Czy na pewno?'        
