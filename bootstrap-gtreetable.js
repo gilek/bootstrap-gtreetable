@@ -344,7 +344,6 @@
         },
 
         sortNodeInTree: function(oNode) {
-            // sprawdzam czy wezej jest otwearty, jesli tak to pobieram potomkow
             var that = this,
                 oSiblings = this.getSiblings(oNode);
 
@@ -353,7 +352,6 @@
                 var oDescendants = !oNode.isExpanded() ? [] : this.getDescendants(oNode, { depth: -1, includeNotSaved: true }),
                     oRelated = undefined;
                 
-                // po kolei sprawdzam pozycje
                 $.each(oSiblings, function () {
                     if (that.options.sort(oNode, this) === -1) {
                         oRelated = this;
@@ -361,7 +359,6 @@
                     }
                 });
                 
-                // nie bylo sortowania z sukcesem
                 if (oRelated === undefined) {
                     oRelated = oSiblings[oSiblings.length-1];
                     if (oRelated.isExpanded()) {
@@ -374,7 +371,6 @@
 
                 oNode.$node.css('border','2px solid blue');
 
-                // przenoszenie potokow
                 var prevNode = oNode.$node;
                 $.each(oDescendants, function() {
                     var oCurrentNode = this;
@@ -445,8 +441,8 @@
             var that = this;
             if ($.isFunction(that.options.onMove)) {
                 $.when(that.options.onMove(oSource, oDestination, position)).done(function (data) {
-                    oDestination.$node.css('backgroundColor', 'red');
-                    oSource.$node.css('backgroundColor', 'green');
+                    //oDestination.$node.css('backgroundColor', 'red');
+                    //oSource.$node.css('backgroundColor', 'green');
 
                     var oSourceDescendants = that.getDescendants(oSource, { depth: -1, includeNotSaved: true }),
                         oOldSourceParent = that.getNodeById(oSource.parent),
@@ -597,7 +593,6 @@
         attachEvents: function () {
             var that = this;
             
-            // hover
             this.$node.mouseover(function () {
                 if (!(that.manager.options.draggable === true && that.manager.isNodeDragging() === true)) {
                     that.$node.addClass(that.manager.options.classes.hovered);
