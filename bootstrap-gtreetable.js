@@ -15,7 +15,7 @@
         this.$tree = $(element);
         this.language = this.options.languages[this.options.language] === undefined ?
                 this.options.languages.en :
-                this.options.languages[this.options.language];
+                $.extend({}, this.options.languages.en, this.options.languages[this.options.language]);
         this._isNodeDragging = false;
         
         var lang = this.language;
@@ -589,7 +589,7 @@
 
             this.$indent.css('marginLeft', ((parseInt(this.level, 10)-1) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
             
-            if (this.type !== undefined && this.manager.options.types[this.type] !== undefined) {
+            if (this.type !== undefined && this.manager.options.types && this.manager.options.types[this.type] !== undefined) {
                 this.$typeIcon.addClass(this.manager.options.types[this.type]).show();
             }
         },
@@ -871,7 +871,10 @@
                 save: 'Save',
                 cancel: 'Cancel',
                 action: 'Action',
-                actionAdd: 'Add',
+                actionAddBefore: 'Add before',
+                actionAddAfter: 'Add after',
+                actionAddFirstChild: 'Add first child',
+                actionAddLastChild: 'Add last child',                
                 actionEdit: 'Edit',
                 actionDelete: 'Delete',
                 deleteConfirm: 'Are you sure?'
@@ -879,25 +882,25 @@
         },
         defaultActions: [
             {
-                name: 'Add before',
+                name: '{actionAddBefore}',
                 event: function (oNode, oManager) {
                     oManager.insertNew(oNode, 'default', 'before');
                 }
             },
             {
-                name: 'Add after',
+                name: '{actionAddAfter}',
                 event: function (oNode, oManager) {
                     oManager.insertNew(oNode, 'default', 'after');
                 }
             },
             {
-                name: 'Add first child',
+                name: '{actionAddFirstChild}',
                 event: function (oNode, oManager) {
                     oManager.insertNew(oNode, 'default', 'firstChild');
                 }
             },
             {
-                name: 'Add last child',
+                name: '{actionAddLastChild}',
                 event: function (oNode, oManager) {
                     oManager.insertNew(oNode, 'default', 'lastChild');
                 }
