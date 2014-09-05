@@ -10,6 +10,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.gtreetable .icon:empty {
+  width: 1em;
+}
 .gtreetable .node-name {
   line-height: 28px;
   cursor: pointer;
@@ -28,11 +31,13 @@
 .gtreetable .node-icon-type {
   margin-right: 12px;
   opacity: 0.2;
+  filter: alpha(opacity=20);
   display: none;
 }
 .gtreetable .node-icon-ce {
   margin-right: 6px;
   opacity: 0.2;
+  filter: alpha(opacity=20);
   cursor: pointer;
 }
 .gtreetable .node-icon-ce:before {
@@ -41,7 +46,6 @@
 .gtreetable .node-expanded .node-icon-ce {
   -webkit-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 .gtreetable .node-hovered {
@@ -50,6 +54,7 @@
 .gtreetable .node-hovered .node-icon-ce,
 .gtreetable .node-hovered .node-icon-type {
   opacity: 1;
+  filter: alpha(opacity=100);
 }
 .gtreetable .node-icon-handle {
   padding-right: 12px;
@@ -93,7 +98,7 @@
   transform: rotate(-90deg);
 }
 .node-draggable-container {
-  background-color: #f5f5f5; 
+  background-color: #f5f5f5;
 }
 .node-draggable-container .node-draggable-pointer {
   visibility: visible;
