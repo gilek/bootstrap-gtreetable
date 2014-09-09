@@ -333,7 +333,8 @@
             this.$name.html(this.name);
             if (this.id !== undefined) {
                 this.$node.attr('data-id', this.id);
-                this.$node.addClass(this.manager.options.classes.saved);
+                this.isSaved(true);
+                
                 if (this.manager.options.draggable === true) {
                     this.$node.addClass(this.manager.options.classes.draggable);
                 }
@@ -766,10 +767,10 @@
             if (action === undefined) {
                 return this._isSaved;
             } else if (action) {
-                this.$name.addClass(this.manager.options.classes.saved);
+                this.$node.addClass(this.manager.options.classes.saved);
                 this._isSaved = true;
             } else {
-                this.$name.removeClass(this.manager.options.classes.saved);
+                this.$node.removeClass(this.manager.options.classes.saved);
                 this._isSaved = false;
             }
         },        

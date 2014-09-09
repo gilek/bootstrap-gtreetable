@@ -141,7 +141,7 @@ jQuery('#gtreetable').gtreetable({
         alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
       }
     }); 
-	}    
+  }    
 });
 ```
 
@@ -211,7 +211,6 @@ jQuery('#gtreetable').gtreetable({
         return 'nodeChildren' + '?id=' + id;
     },
     'language': 'pl'
-
 });
 ```
 
@@ -266,7 +265,7 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 
 + `sort` (callback (GTreeTableNode oNodeA, GTreeTableNode oNodeB)) - funkcja sortująca wywoływania w momencie wyświetlania węzłów, dodawania nowego lub zmiany jego nazwy. Zasada działania jest analogiczna, jak w przypadku [sortowania tablicy](https://developer.mozilla.org/pl/docs/Web/JavaScript/Referencje/Obiekty/Array/sort).
 
-		Oto przykładowe sortowanie po nazwie węzła w kolejności rosnącej:
+    Oto przykładowe sortowanie po nazwie węzła w kolejności rosnącej:
 
     ```javascript
     function (a, b) {          
