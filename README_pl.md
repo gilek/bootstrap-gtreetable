@@ -241,6 +241,8 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 
     Warto nadmienić, że gdy etykieta akcji znajduje się w nawiasie klamrowym  np. `{actionEdit}`, wówczas jej wartość zostanie przetłumaczona na język z parametru `language`.
 
++ `dragCanExpand` (boolean) - określa czy podczas przenoszenia węzła możliwe jest rozwijanie innych węzłów po najechaniu kursorem myszy na odpowiednią ikonę.
+
 + `draggable` (boolean) - określa, czy poszczególne węzły mogą być przenoszone. Zmiana parametru na wartość true wiąże się z koniecznością dołączenia bilblioteki [jQueryUI](http://jqueryui.com/), a konkretnie modułów:
   + core,
   + widget,
@@ -253,11 +255,11 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 
 + `language` (String) - język interfejsu użytkownika. W domyśle angielski. Zmiana na inny, wiąże się z koniecznością dołączenia pliku tłumaczeń. W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas jej wartość pozostaje w języku angielskim.
 
++ `manyroots` (boolean) - określa, czy możliwe jest tworzenie wielu węzłów głównych.
+
 + `multiselect` (mixed) - określa czy możliwe jest wybranie więcej niż jednego węzła. Jeśli wartość parametru będzie liczbą, wówczas stanowi ona limit wyboru węzłów.
 
 + `nodeIndent` (Integer) - odległość od lewego boku tabeli. Wartość jest pomnażana w zależność od stopnia węzła.
-
-+ `onDragCanExpand` (boolean) - określa czy podczas przenoszenia węzła możliwe jest rozwijanie innych węzłów po najechaniu kursorem myszy na odpowiednią ikonę.
 
 + `readonly` (boolean) - określa czy drzewo ma być tylko do odczytu tzn. czy mają być wyświetlane przyciski akcji.
 

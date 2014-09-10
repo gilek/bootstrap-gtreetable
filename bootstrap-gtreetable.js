@@ -62,7 +62,7 @@
                 } 
                 else {
                     var matches = action.name.match(/\{([\w\W]+)\}/),
-                        name = matches !== null && matches[1] !== undefined && lang[matches[1]] !== undefined ? lang[matches[1]] : action.name;
+                        name = matches !== null && matches[1] !== undefined && lang.actions[matches[1]] !== undefined ? lang.actions[matches[1]] : action.name;
                     template += '<li role="presentation"><a href="#notarget" class="node-action-' + index + '" tabindex="-1">' + name + '</a></li>';
                 }
             });
@@ -213,6 +213,23 @@
                 }
             });
             return path;
+        },        
+
+        getParents: function () {
+            var parents = [],
+            parentId = this.parent;
+            
+            while (true) {
+                if (parentId === 0) {
+                    break;
+                }
+                
+                var oNode = this.manager.getNodeById(parentId);
+                parents.push(oNode);
+                parentId = oNode.parent;
+                
+            }
+            return parents;        
         },        
         
         getSiblings: function () {
@@ -401,7 +418,7 @@
                     that.collapse();
                 }
             });
-            if (that.manager.options.onDragCanExpand === true) {
+            if (that.manager.options.dragCanExpand === true) {
                 this.$ceIcon.mouseover(function (e) {
                     if (that.manager.options.draggable === true && that.manager.isNodeDragging() === true) {
                         if (!that.isExpanded()) {
@@ -454,7 +471,7 @@
                 this.$node
                     .draggable( {
                         scroll:true,
-                        refreshPositions: that.manager.options.onDragCanExpand,
+                        refreshPositions: that.manager.options.dragCanExpand,
                         helper: function (e) {
                             var oName = that.manager.getNode($(this));
                             return '<mark class="' + that.manager.options.classes.draggableHelper + '">' + oName.name + '</mark>';
@@ -572,14 +589,30 @@
             });
         },        
         
+        _canAdd: function(oNewNode) {
+            var data = { result: oNewNode.parent === 0 && this.manager.options.manyroots };
+            if (!data.result) {
+                data.message = this.manager.language.messages.onNewRootNotAllowed;
+            }
+            return data;
+        },
+        
         add: function (position, type) {
+            
             var oTriggerNode = this,
                 childPosition = (position === 'lastChild' || position === 'firstChild'),
                 oNewNode = new GTreeTableNode({
                     level: oTriggerNode.level + (childPosition ? 1 : 0),
                     parent: oTriggerNode.level === 1 && !childPosition ? 0 : (childPosition ? oTriggerNode.id : oTriggerNode.parent),
                     type: type
-                },this.manager);
+                },this.manager),
+                canAddData = this._canAdd(oNewNode);
+                
+                
+            if (!canAddData.result) {
+                alert(canAddData.message);
+                return false;
+            }
            
             function ins() {
                 if (childPosition) {
@@ -661,8 +694,33 @@
             }
         },    
         
-        move: function(oDestination, position) {
-            var oNode = this;
+        _canMove: function(oDestination) {
+            var oNode = this, 
+                data = { result: true };
+            if (oDestination.parent === 0  && this.manager.options.manyroots === false) {
+                data.result = false;
+                data.message = this.manager.language.messages.onMoveAsRoot;
+            } else {              
+                $.each(oDestination.getParents(), function () {
+                    if (this.id === oNode.id) {
+                        data.result = false;
+                        data.message = this.manager.language.messages.onMoveInDescendant;   
+                        return false;
+                    }
+                });          
+            }
+            return data;
+        },
+        
+        move: function(oDestination, position) {            
+            var oNode = this,
+                moveData = this._canMove(oDestination, position);
+            
+            if (moveData.result === false) {
+                alert(moveData.message);
+                return false;
+            }
+            
             if ($.isFunction(oNode.manager.options.onMove)) {
                 $.when(oNode.manager.options.onMove(oNode, oDestination, position)).done(function (data) {
 
@@ -879,44 +937,52 @@
         inputWidth: '60%',
         readonly: false,
         multiselect: false,
+        manyroots: false,
         draggable: false,
-        onDragCanExpand: false,
+        dragCanExpand: false,
         showExpandIconOnEmpty: false,        
         languages: {
             en: {
                 save: 'Save',
                 cancel: 'Cancel',
                 action: 'Action',
-                actionAddBefore: 'Add before',
-                actionAddAfter: 'Add after',
-                actionAddFirstChild: 'Add first child',
-                actionAddLastChild: 'Add last child',                
-                actionEdit: 'Edit',
-                actionDelete: 'Delete',
-                deleteConfirm: 'Are you sure?'
+                actions: {
+                    addBefore: 'Add before',
+                    addAfter: 'Add after',
+                    addFirstChild: 'Add first child',
+                    addLastChild: 'Add last child',
+                    edit: 'Edit',
+                    'delete': 'Delete'
+                },
+                messages: {
+                    onDelete: 'Are you sure?',
+                    onNewRootNotAllowed: 'Adding the now node as root is not allowed.',
+                    onMoveInDescendant: 'The target node should not be descendant.',
+                    onMoveAsRoot: 'The target node should not be root.'
+                }                
             }
         },
         defaultActions: [
             {
-                name: '{actionAddBefore}',
+                name: '{addBefore}',
                 event: function (oNode, oManager) {
                     oNode.add('before', 'default');
                 }
             },
             {
-                name: '{actionAddAfter}',
+                name: '{addAfter}',
                 event: function (oNode, oManager) {
                     oNode.add('after', 'default');
                 }
             },
             {
-                name: '{actionAddFirstChild}',
+                name: '{addFirstChild}',
                 event: function (oNode, oManager) {
                     oNode.add('firstChild', 'default');
                 }
             },
             {
-                name: '{actionAddLastChild}',
+                name: '{addLastChild}',
                 event: function (oNode, oManager) {
                     oNode.add('lastChild', 'default');
                 }
@@ -925,15 +991,15 @@
                 divider: true
             },
             {
-                name: '{actionEdit}',
+                name: '{edit}',
                 event: function (oNode, oManager) {
                     oNode.makeEditable();
                 }
             },
             {
-                name: '{actionDelete}',
+                name: '{delete}',
                 event: function (oNode, oManager) {
-                    if (confirm(oManager.language.deleteConfirm)) {
+                    if (confirm(oManager.language.messages.onDelete)) {
                         oNode.remove();
                     }
                 }

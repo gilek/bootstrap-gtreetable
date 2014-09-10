@@ -22,12 +22,19 @@
         save: 'Zapisz',
         cancel: 'Anuluj',
         action: 'Akcja',
-        actionAddBefore: 'Dodaj przed',
-        actionAddAfter: 'Dodaj po',
-        actionAddFirstChild: 'Dodaj pierwszy',
-        actionAddLastChild: 'Dodaj ostatni',
-        actionEdit: 'Edytuj',
-        actionDelete: 'Usuń',
-        deleteConfirm: 'Czy na pewno?'        
+        actions: {
+            addBefore: 'Dodaj przed',
+            addAfter: 'Dodaj po',
+            addFirstChild: 'Dodaj pierwszy',
+            addLastChild: 'Dodaj ostatni',
+            edit: 'Edytuj',
+            delete: 'Usuń'       
+        },
+        messages: {
+            onDelete: 'Czy na pewno?',
+            onNewRootNotAllowed: 'Dodawania nowego węzła głównego jest zabronione.',
+            onMoveInDescendant: 'Wezeł nadrzędny nie może być potomnym.',
+            onMoveAsRoot: 'Przenosiny jako węzeł główny jest zabronione.'          
+        }
     };
 }( jQuery ));
