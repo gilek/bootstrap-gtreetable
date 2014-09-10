@@ -17,6 +17,7 @@
                 this.options.languages.en :
                 $.extend({}, this.options.languages.en, this.options.languages[this.options.language]);
         this._isNodeDragging = false;
+        this._lastId = 0;
         
         var lang = this.language;
 
@@ -160,9 +161,7 @@
                 }
             });
         },
-
-   
-                        
+                     
         isNodeDragging: function(action) {
             if (action === undefined) {
                 return this._isNodeDragging;
@@ -173,6 +172,11 @@
                 this._isNodeDragging = false;
                 this.$tree.enableSelection();
             }
+        },
+        
+        generateNewId: function() {
+            this._lastId += 1;
+            return 'g' + this._lastId;
         }
     };
 
@@ -531,19 +535,29 @@
             var oNode = this;
             if ($.isFunction(oNode.manager.options.onSave)) {
                 $.when(oNode.manager.options.onSave(oNode)).done(function (data) {
-                    oNode.id = data.id;
-                    oNode.name = data.name;                                       
-                                      
-                    if ($.isFunction(oNode.manager.options.sort)) {
-                        oNode.sort();
-                    }
-
-                    oNode.render(); 
-                    oNode.showForm(false);
-                    oNode.isHovered(false);
+                    oNode._save(data);
+                });
+            } else {
+                oNode._save({
+                    name: oNode.getName(),
+                    id: oNode.manager.generateNewId()
                 });
             }
-        },        
+        }, 
+        
+        _save: function(data) {
+            var oNode = this;
+            oNode.id = data.id;
+            oNode.name = data.name;                                       
+
+            if ($.isFunction(oNode.manager.options.sort)) {
+                oNode.sort();
+            }
+
+            oNode.render(); 
+            oNode.showForm(false);
+            oNode.isHovered(false);
+        },
         
         saveCancel: function () {
             this.showForm(false);
@@ -590,7 +604,7 @@
         },        
         
         _canAdd: function(oNewNode) {
-            var data = { result: oNewNode.parent === 0 && this.manager.options.manyroots };
+            var data = { result: !(oNewNode.parent === 0 && this.manager.options.manyroots === false) };
             if (!data.result) {
                 data.message = this.manager.language.messages.onNewRootNotAllowed;
             }
@@ -598,7 +612,6 @@
         },
         
         add: function (position, type) {
-            
             var oTriggerNode = this,
                 childPosition = (position === 'lastChild' || position === 'firstChild'),
                 oNewNode = new GTreeTableNode({
@@ -669,12 +682,10 @@
         remove: function () {
             var oNode = this;
 
-            if (oNode.isSaved()) {
-                if ($.isFunction(oNode.manager.options.onDelete)) {
-                    $.when(oNode.manager.options.onDelete(oNode)).done(function () {
-                        oNode._remove();
-                    });
-                }
+            if (oNode.isSaved() && $.isFunction(oNode.manager.options.onDelete)) {
+                $.when(oNode.manager.options.onDelete(oNode)).done(function () {
+                    oNode._remove();
+                });
             } else {
                 this._remove();
             }
@@ -711,7 +722,7 @@
             }
             return data;
         },
-        
+                
         move: function(oDestination, position) {            
             var oNode = this,
                 moveData = this._canMove(oDestination, position);
@@ -723,56 +734,61 @@
             
             if ($.isFunction(oNode.manager.options.onMove)) {
                 $.when(oNode.manager.options.onMove(oNode, oDestination, position)).done(function (data) {
-
-                    var oNodeDescendants = oNode.getDescendants({ depth: -1, includeNotSaved: true }),
-                        oOldSourceParent = oNode.manager.getNodeById(oNode.parent),
-                        delta = oDestination.level - oNode.level;
-
-                    oNode.parent = position === 'lastChild' ? oDestination.id : oDestination.parent;
-                    oNode.level = oDestination.level;
-
-                    if (position === 'lastChild' && !oDestination.isExpanded()) {
-                        oNode.$node.remove();
-                        $.each(oNodeDescendants, function () {
-                            this.$node.remove();
-                        });                
-                    } else {
-
-                        if (position === 'lastChild') {
-                            oNode.level += 1;
-                            oDestination.showCeIcon(true);
-                        }
-                        oNode.render();
-                        oNode.insert(position, oDestination);
-                         
-                        if (oNodeDescendants.length > 0) {
-                            var prevNode = oNode.$node;
-                            if (position === 'lastChild') {
-                                delta += 1;
-                            }
-                            $.each(oNodeDescendants, function() {
-                                var oNode = this;
-                                oNode.level += delta;
-                                oNode.render();
-                                prevNode.after(oNode.$node);
-                                prevNode = oNode.$node;
-                            });                
-                        }                        
-                    }
-
-                    // sprawdza, czy nie byl przeniesiony ostatni element
-                    // oOldSourceParent !== undefined => parent = 0
-                    if (oOldSourceParent !== undefined && oOldSourceParent.getDescendants({depth: 1, includeNotSaved: true}).length === 0) {
-                        oOldSourceParent.isExpanded(false);
-                    }
-                    
-                    if ($.isFunction(oNode.manager.options.sort)) {
-                        oNode.sort();
-                    }                    
-                    
+                    oNode._move(oDestination, position); 
                 });
+            } else {
+                oNode._move(oDestination, position);
             }
         }, 
+        
+        _move: function(oDestination, position) {
+            var oNode = this,
+                oNodeDescendants = oNode.getDescendants({ depth: -1, includeNotSaved: true }),
+                oOldSourceParent = oNode.manager.getNodeById(oNode.parent),
+                delta = oDestination.level - oNode.level;
+
+            oNode.parent = position === 'lastChild' ? oDestination.id : oDestination.parent;
+            oNode.level = oDestination.level;
+
+            if (position === 'lastChild' && !oDestination.isExpanded()) {
+                oNode.$node.remove();
+                $.each(oNodeDescendants, function () {
+                    this.$node.remove();
+                });                
+            } else {
+
+                if (position === 'lastChild') {
+                    oNode.level += 1;
+                    oDestination.showCeIcon(true);
+                }
+                oNode.render();
+                oNode.insert(position, oDestination);
+
+                if (oNodeDescendants.length > 0) {
+                    var prevNode = oNode.$node;
+                    if (position === 'lastChild') {
+                        delta += 1;
+                    }
+                    $.each(oNodeDescendants, function() {
+                        var oNode = this;
+                        oNode.level += delta;
+                        oNode.render();
+                        prevNode.after(oNode.$node);
+                        prevNode = oNode.$node;
+                    });                
+                }                        
+            }
+
+            // sprawdza, czy nie byl przeniesiony ostatni element
+            // oOldSourceParent !== undefined => parent = 0
+            if (oOldSourceParent !== undefined && oOldSourceParent.getDescendants({depth: 1, includeNotSaved: true}).length === 0) {
+                oOldSourceParent.isExpanded(false);
+            }
+
+            if ($.isFunction(oNode.manager.options.sort)) {
+                oNode.sort();
+            }                        
+        },        
         
         sort: function() {
             var oNode = this,
