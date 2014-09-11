@@ -188,10 +188,11 @@ jQuery('#gtreetable').gtreetable({
     'source': function(id) {
         return 'nodeChildren' + '?id=' + id;
     },
-    'types': {'default':'glyphicon glyphicon-folder-open'}
-
+    'types': { default: 'glyphicon glyphicon-folder-open'}
 });
 ```
+
+Dodawanie odmiennych typów węzłów, realizowane jest poprzez metodę `GTreeTableNode.add(String position, String type)`.
 
 ![](http://gilek.net/images/gtt2-type.png) 
  
@@ -228,8 +229,8 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 
     ```javascript
     {
-    	name: 'Etykieta akcji',
-    	event: function (oNode, oManager) { // kod do wykonania }
+      name: 'Etykieta akcji',
+      event: function (oNode, oManager) { // kod do wykonania }
     }
     ```
 
@@ -285,16 +286,16 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 
     ```JSON
     {
-        "id": "identyfikator węzła",
-        "name": "nazwa węzła",
-        "level": "poziom na którym się znajduje", 
-        "type": "typ węzła"
+      id: "identyfikator węzła",
+      name: 'nazwa węzła',
+      level: 'poziom na którym się znajduje', 
+      type: 'typ węzła'
     }
     ```
 
 + `types` (Object) - obiekt zawiera powiązania typów z klasami ikon np.
     ```javascript
-    {"default":"glyphicon glyphicon-folder-open"}
+    { default: "glyphicon glyphicon-folder-open" }
     ```
 
 ### Zdarzenia
@@ -324,3 +325,7 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 ## Część serwerowa
 
 GTreeTable oferuję obsługę jedynie z poziomu JavaScript. Za część serwerową mogą posłużyć specjalne dodatki fareworka Yii tj. [Yii2-GTreeTable](https://github.com/gilek/Yii2-GTreeTable) lub [Yii-GTreeTable](https://github.com/gilek/Yii-GTreeTable). Jeśli na co dzień, nie używasz tego oprogramowania, to nie ma powodów do obaw. W najbliższym czasie zostanie przygotowana specjalna biblioteka, napisana w natywnym PHP, przeznaczona od realizacji tego zadania.
+
+## Ograniczenia
+
+Na obecną chwilę GTreeTable nie przechowuje wcześniej pobranych węzłów.
