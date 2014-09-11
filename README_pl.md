@@ -185,10 +185,10 @@ Przykładowa konfiguracja:
 
 ```javascript
 jQuery('#gtreetable').gtreetable({
-    'source': function(id) {
-        return 'nodeChildren' + '?id=' + id;
-    },
-    'types': { default: 'glyphicon glyphicon-folder-open'}
+  'source': function(id) {
+    return 'nodeChildren' + '?id=' + id;
+  },
+  'types': { default: 'glyphicon glyphicon-folder-open'}
 });
 ```
 
@@ -208,10 +208,10 @@ Przykładowa konfiguracja:
 
 ```javascript
 jQuery('#gtreetable').gtreetable({
-    'source': function(id) {
-        return 'nodeChildren' + '?id=' + id;
-    },
-    'language': 'pl'
+  'source': function(id) {
+    return 'nodeChildren' + '?id=' + id;
+  },
+  'language': 'pl'
 });
 ```
 
@@ -286,10 +286,10 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 
     ```JSON
     {
-      id: "identyfikator węzła",
-      name: 'nazwa węzła',
-      level: 'poziom na którym się znajduje', 
-      type: 'typ węzła'
+      "id": "identyfikator węzła",
+      "name": "nazwa węzła",
+      "level": "poziom na którym się znajduje", 
+      "type": "typ węzła"
     }
     ```
 
