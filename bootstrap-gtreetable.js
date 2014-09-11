@@ -8,6 +8,140 @@
 
 (function ($) {
 
+    function GTreeTableCache(manager) {
+        this._cached = {};
+        this.manager = manager;
+    }
+    
+    GTreeTableCache.prototype = {  
+        _getIP: function (param) {
+            return typeof param === "string" ? param : param.getIP();
+        },
+        
+        get: function(param) {
+            return this._cached[this._getIP(param)];
+        },
+        
+        set: function (param, data) {
+            this._cached[this._getIP(param)] = data;
+        },
+                
+        delete: function (param) {
+            this._cached[this._getIP(param)] = undefined;
+        },
+        
+        synchronize: function (method, oNode, oTargetNode) {
+            if (oNode.parent > 0) {
+                switch (method) {
+                    case 'add':
+                        this._synchronizeAdd(oNode);
+                        break;
+                        
+                    case 'edit': 
+                        this._synchronizeEdit(oNode);
+                        break;
+                        
+                    case 'delete':
+                        this._synchronizeDelete(oNode);
+                        break;
+                        
+                    case 'move':
+                        this._synchronizeMove(oNode, oTargetNode);
+                        break;
+                        
+                    default:
+                        throw "Wrong method.";
+                        break;
+                }
+            }            
+        },
+        
+        _synchronizeAdd: function (oNode) {
+            var oParentNode = this.manager.getNodeById(oNode.parent);
+
+            if (this.isSortDefined()) {
+                var data = this.get(oParentNode);
+                data.push({
+                    id: oNode.id,
+                    name: oNode.getName(),
+                    level: oNode.level,
+                    type: oNode.type
+                });
+                this.set(oParentNode, this.sort(data));
+            } else {
+                this.delete(oParentNode);
+            }
+        },
+        
+        _synchronizeEdit: function (oNode) {
+            var oParentNode = this.manager.getNodeById(oNode.parent);
+            
+            if (this.isSortDefined()) {
+                var data = this.get(oParentNode);
+                $.each(data, function () {
+                    if (this.id === oNode.id) {
+                        this.name = oNode.getName();
+                        return false;
+                    }
+                });
+                this.set(oParentNode, this.sort(data));
+                
+            } else {
+                this.delete(oParentNode);
+            }            
+        },
+        
+        _synchronizeDelete: function(oNode) {            
+            var oParentNode = this.manager.getNodeById(oNode.parent);
+            
+            if (this.isSortDefined()) {
+                var data = this.get(oParentNode),
+                    position = undefined;
+                
+                // pobieranie pozycji
+                $(data, function(index) {
+                    if (this.id === oNode.getId()) {
+                        position = index;
+                        return false;
+                    }
+                });
+                if (position !== undefined) {
+                    this.set(oParentNode, data.splice(position, 1));
+                }
+            } else {
+                this.delete(oParentNode);
+            }                      
+        },
+        
+        _synchronizeMove: function(oNode, oDestinationNode) {
+            var that = this,
+                ip = oNode.getIP(),
+                delta = oNode.level - oDestinationNode.level;
+        
+            $.each(this._cached, function (index) {
+               if (index === ip || index.indexOf(ip+'.') > -1) {
+                    if (that.isSortDefined()) {
+                        $(this.get(index)).each(function () {
+                            this.level += delta;
+                        });      
+                    } else {
+                        that.delete(index);
+                    }
+               }
+            });
+            
+            this.synchronize('add', oDestinationNode);            
+        },
+        
+        isSortDefined: function () {
+            return $.isFunction(this.manager.options.sort);
+        },
+        
+        sort: function (data) {
+            return data.sort(this.manager.options.sort);
+        }
+    };    
+
     // GTREETABLE CLASS DEFINITION
     // =============================    
     function GTreeTable(element, options) {
@@ -18,6 +152,10 @@
                 $.extend({}, this.options.languages.en, this.options.languages[this.options.language]);
         this._isNodeDragging = false;
         this._lastId = 0;
+        
+        if (this.options.cache === true) {
+            this.cacheManager = new GTreeTableCache(this);
+        }
         
         var lang = this.language;
 
@@ -118,33 +256,46 @@
             return selectedNodes;
         },
 
-        getSourceNodes: function (parentId) {
-            var that = this;
+        getSourceNodes: function (nodeId) {
+            var that = this,
+                oNode = this.getNodeById(nodeId),
+                cached = nodeId > 0 && this.options.cache === true;
+                
+            if (cached) {
+                var data = this.cacheManager.get(oNode);
+                if (data !== undefined) {
+                    return data;
+                }
+            }
 
             return $.ajax({
                 type: 'GET',
-                url: that.options.source(parentId),
+                url: that.options.source(nodeId),
                 dataType: 'json',
                 beforeSend: function () {
-                    if (parentId > 0) {
-                        that.getNodeById(parentId).isLoading(true);
+                    if (nodeId > 0) {
+                        oNode.isLoading(true);
                     }
                 },
                 success: function (nodes) {
                     for (var x = 0; x < nodes.length; x += 1) {
-                        nodes[x].parent = parentId;
+                        nodes[x].parent = nodeId;
                     }
 
                     if (typeof that.options.sort === "function") {
                         nodes.sort(that.options.sort);
+                    }
+                    
+                    if (cached) {
+                        that.cacheManager.set(oNode, nodes);
                     }
                 },
                 error: function (XMLHttpRequest) {
                     alert(XMLHttpRequest.status + ': ' + XMLHttpRequest.responseText);
                 },
                 complete: function () {
-                    if (parentId > 0) {
-                        that.getNodeById(parentId).isLoading(false);
+                    if (nodeId > 0) {
+                        oNode.isLoading(false);
                     }
                 }
             });
@@ -234,7 +385,24 @@
                 
             }
             return parents;        
-        },        
+        },   
+        
+        //TODO
+        // potrzebne tylko w przypadku cache
+        getIP: function() {
+            var oNode = this,
+                ip = '0';
+        
+            var parents = oNode.getParents();
+            parents.reverse();
+            $.each(parents, function() {
+                ip += '.'+this.id;
+            });
+            
+            ip += '.'+oNode.id;
+
+            return ip;
+        },
         
         getSiblings: function () {
             var oNode = this,
@@ -554,9 +722,15 @@
                 oNode.sort();
             }
 
+            if (this.manager.options.cache === true) {
+                this.manager.cacheManager.synchronize(oNode.isSaved() ? 'edit' : 'add', oNode);
+            }
+
             oNode.render(); 
             oNode.showForm(false);
             oNode.isHovered(false);
+            
+          
         },
         
         saveCancel: function () {
@@ -703,12 +877,16 @@
                     oParent.collapse();
                 }
             }
+            
+            if (this.manager.options.cache === true) {
+                this.manager.cacheManager.synchronize('delete', this);
+            }
         },    
         
-        _canMove: function(oDestination) {
+        _canMove: function(oDestination, position) {
             var oNode = this, 
                 data = { result: true };
-            if (oDestination.parent === 0  && this.manager.options.manyroots === false) {
+            if (oDestination.parent === 0 && this.manager.options.manyroots === false && position !== 'lastChild') {
                 data.result = false;
                 data.message = this.manager.language.messages.onMoveAsRoot;
             } else {              
@@ -787,7 +965,11 @@
 
             if ($.isFunction(oNode.manager.options.sort)) {
                 oNode.sort();
-            }                        
+            }    
+            
+            if (this.manager.options.cache === true) {
+                this.manager.cacheManager.synchronize('move', oNode, oDestination);
+            }            
         },        
         
         sort: function() {
@@ -951,6 +1133,7 @@
         nodeIndent: 16,
         language: 'en',
         inputWidth: '60%',
+        cache: true,
         readonly: false,
         multiselect: false,
         manyroots: false,
