@@ -8,141 +8,7 @@
 
 (function ($) {
 
-    function GTreeTableCache(manager) {
-        this._cached = {};
-        this.manager = manager;
-    }
-    
-    GTreeTableCache.prototype = {  
-        _getIP: function (param) {
-            return typeof param === "string" ? param : param.getIP();
-        },
-        
-        get: function(param) {
-            return this._cached[this._getIP(param)];
-        },
-        
-        set: function (param, data) {
-            this._cached[this._getIP(param)] = data;
-        },
-                
-        delete: function (param) {
-            this._cached[this._getIP(param)] = undefined;
-        },
-        
-        synchronize: function (method, oNode, oTargetNode) {
-            if (oNode.parent > 0) {
-                switch (method) {
-                    case 'add':
-                        this._synchronizeAdd(oNode);
-                        break;
-                        
-                    case 'edit': 
-                        this._synchronizeEdit(oNode);
-                        break;
-                        
-                    case 'delete':
-                        this._synchronizeDelete(oNode);
-                        break;
-                        
-                    case 'move':
-                        this._synchronizeMove(oNode, oTargetNode);
-                        break;
-                        
-                    default:
-                        throw "Wrong method.";
-                        break;
-                }
-            }            
-        },
-        
-        _synchronizeAdd: function (oNode) {
-            var oParentNode = this.manager.getNodeById(oNode.parent);
-
-            if (this.isSortDefined()) {
-                var data = this.get(oParentNode);
-                data.push({
-                    id: oNode.id,
-                    name: oNode.getName(),
-                    level: oNode.level,
-                    type: oNode.type
-                });
-                this.set(oParentNode, this.sort(data));
-            } else {
-                this.delete(oParentNode);
-            }
-        },
-        
-        _synchronizeEdit: function (oNode) {
-            var oParentNode = this.manager.getNodeById(oNode.parent);
-            
-            if (this.isSortDefined()) {
-                var data = this.get(oParentNode);
-                $.each(data, function () {
-                    if (this.id === oNode.id) {
-                        this.name = oNode.getName();
-                        return false;
-                    }
-                });
-                this.set(oParentNode, this.sort(data));
-                
-            } else {
-                this.delete(oParentNode);
-            }            
-        },
-        
-        _synchronizeDelete: function(oNode) {            
-            var oParentNode = this.manager.getNodeById(oNode.parent);
-            
-            if (this.isSortDefined()) {
-                var data = this.get(oParentNode),
-                    position = undefined;
-                
-                // pobieranie pozycji
-                $(data, function(index) {
-                    if (this.id === oNode.getId()) {
-                        position = index;
-                        return false;
-                    }
-                });
-                if (position !== undefined) {
-                    this.set(oParentNode, data.splice(position, 1));
-                }
-            } else {
-                this.delete(oParentNode);
-            }                      
-        },
-        
-        _synchronizeMove: function(oNode, oDestinationNode) {
-            var that = this,
-                ip = oNode.getIP(),
-                delta = oNode.level - oDestinationNode.level;
-        
-            $.each(this._cached, function (index) {
-               if (index === ip || index.indexOf(ip+'.') > -1) {
-                    if (that.isSortDefined()) {
-                        $(this.get(index)).each(function () {
-                            this.level += delta;
-                        });      
-                    } else {
-                        that.delete(index);
-                    }
-               }
-            });
-            
-            this.synchronize('add', oDestinationNode);            
-        },
-        
-        isSortDefined: function () {
-            return $.isFunction(this.manager.options.sort);
-        },
-        
-        sort: function (data) {
-            return data.sort(this.manager.options.sort);
-        }
-    };    
-
-    // GTREETABLE CLASS DEFINITION
+    // GTREETABLE CLASSES DEFINITION
     // =============================    
     function GTreeTable(element, options) {
         this.options = options;
@@ -153,7 +19,7 @@
         this._isNodeDragging = false;
         this._lastId = 0;
         
-        if (this.options.cache === true) {
+        if (this.options.cache > 0) {
             this.cacheManager = new GTreeTableCache(this);
         }
         
@@ -259,7 +125,7 @@
         getSourceNodes: function (nodeId) {
             var that = this,
                 oNode = this.getNodeById(nodeId),
-                cached = nodeId > 0 && this.options.cache === true;
+                cached = nodeId > 0 && this.options.cache > 0;
                 
             if (cached) {
                 var data = this.cacheManager.get(oNode);
@@ -722,15 +588,13 @@
                 oNode.sort();
             }
 
-            if (this.manager.options.cache === true) {
+            if (this.manager.options.cache > 0) {
                 this.manager.cacheManager.synchronize(oNode.isSaved() ? 'edit' : 'add', oNode);
             }
 
             oNode.render(); 
             oNode.showForm(false);
             oNode.isHovered(false);
-            
-          
         },
         
         saveCancel: function () {
@@ -878,7 +742,7 @@
                 }
             }
             
-            if (this.manager.options.cache === true) {
+            if (this.manager.options.cache > 0) {
                 this.manager.cacheManager.synchronize('delete', this);
             }
         },    
@@ -922,7 +786,8 @@
         _move: function(oDestination, position) {
             var oNode = this,
                 oNodeDescendants = oNode.getDescendants({ depth: -1, includeNotSaved: true }),
-                oOldSourceParent = oNode.manager.getNodeById(oNode.parent),
+                oOldNode = $.extend({}, oNode),
+                oldIP = oNode.getIP(),
                 delta = oDestination.level - oNode.level;
 
             oNode.parent = position === 'lastChild' ? oDestination.id : oDestination.parent;
@@ -959,16 +824,17 @@
 
             // sprawdza, czy nie byl przeniesiony ostatni element
             // oOldSourceParent !== undefined => parent = 0
-            if (oOldSourceParent !== undefined && oOldSourceParent.getDescendants({depth: 1, includeNotSaved: true}).length === 0) {
-                oOldSourceParent.isExpanded(false);
+            var oOldNodeParent = oNode.manager.getNodeById(oOldNode.parent);
+            if (oOldNodeParent !== undefined && oOldNodeParent.getDescendants({depth: 1, includeNotSaved: true}).length === 0) {
+                oOldNodeParent.isExpanded(false);
             }
 
             if ($.isFunction(oNode.manager.options.sort)) {
                 oNode.sort();
             }    
             
-            if (this.manager.options.cache === true) {
-                this.manager.cacheManager.synchronize('move', oNode, oDestination);
+            if (this.manager.options.cache > 0) {
+                this.manager.cacheManager.synchronize('move', oNode, { 'oOldNode': oOldNode, 'oldIP': oldIP });
             }            
         },        
         
@@ -1095,6 +961,150 @@
             }
         }
     };
+    
+   function GTreeTableCache(manager) {
+        this._cached = {};
+        this.manager = manager;
+    }
+    
+    GTreeTableCache.prototype = {  
+        _getIP: function (param) {
+            return typeof param === "string" ? param : param.getIP();
+        },
+        
+        get: function(param) {
+            return this._cached[this._getIP(param)];
+        },
+        
+        set: function (param, data) {
+            this._cached[this._getIP(param)] = data;
+        },
+                
+        remove: function (param) {
+            this._cached[this._getIP(param)] = undefined;
+        },
+        
+        synchronize: function (method, oNode, params) {
+            if (oNode.parent > 0) {
+                switch (method) {
+                    case 'add':
+                        this._synchronizeAdd(oNode);
+                        break;
+                        
+                    case 'edit': 
+                        this._synchronizeEdit(oNode);
+                        break;
+                        
+                    case 'delete':
+                        this._synchronizeDelete(oNode);
+                        break;
+                        
+                    case 'move':
+                        this._synchronizeMove(oNode, params);
+                        break;
+                        
+                    default:
+                        throw "Wrong method.";
+                        break;
+                }
+            }            
+        },
+        
+        _synchronizeAdd: function (oNode) {
+            var oParentNode = this.manager.getNodeById(oNode.parent);
+
+            if (this.manager.options.cache > 1) {
+                var data = this.get(oParentNode);
+                if (data !== undefined) {
+                    data.push({
+                        id: oNode.id,
+                        name: oNode.getName(),
+                        level: oNode.level,
+                        type: oNode.type,
+                        parent: oNode.parent
+                    });
+                    this.set(oParentNode, this.isSortDefined() ? this.sort(data) : data);
+                }
+            } else {
+                this.remove(oParentNode);
+            }
+        },
+        
+        _synchronizeEdit: function (oNode) {
+            var oParentNode = this.manager.getNodeById(oNode.parent);
+            
+            if (this.manager.options.cache > 1) {
+                var data = this.get(oParentNode);
+                $.each(data, function () {
+                    if (this.id === oNode.id) {
+                        this.name = oNode.getName();
+                        return false;
+                    }
+                });
+                this.set(oParentNode, this.isSortDefined() ? this.sort(data) : data);
+            } else {
+                this.remove(oParentNode);
+            }            
+        },
+        
+        _synchronizeDelete: function(oNode) {            
+            var oParentNode = this.manager.getNodeById(oNode.parent);
+            
+            if (this.manager.options.cache > 1) {
+                var data = this.get(oParentNode),
+                    position = undefined;
+                
+                // pobieranie pozycji
+                $.each(data, function(index) {
+                    if (this.id === oNode.id) {
+                        position = index;
+                        return false;
+                    }
+                });
+                if (position !== undefined) {
+                    data.splice(position, 1);
+                    this.set(oParentNode, data);
+                }
+            } else {
+                this.remove(oParentNode);
+            }                      
+        },
+        
+        _synchronizeMove: function(oNode, params) {
+            var that = this,
+                newIP = oNode.getIP(),
+                delta =  oNode.level - params.oOldNode.level;
+        
+            $.each(this._cached, function (index) {
+                if (index === params.oldIP || index.indexOf(params.oldIP+'.') === 0) {
+ 
+                    if (that.manager.options.cache > 1) {
+                        var newData = [],
+                            newIndex = index !== params.oldIP ? newIP + index.substr(params.oldIP.length) : newIP;
+                        
+                        $(that.get(index)).each(function () {
+                            this.level += delta;
+                            newData.push(this);
+                        });      
+                        that.set(newIndex, newData);
+                    } 
+                    
+                    that.remove(index);
+                                        
+                }
+            });
+            this.synchronize('delete', params.oOldNode);   
+            this.synchronize('add', oNode);            
+        },
+        
+        isSortDefined: function () {
+            return $.isFunction(this.manager.options.sort);
+        },
+        
+        sort: function (data) {
+            return data.sort(this.manager.options.sort);
+        }
+    };    
 
     // OVERLAYINPUT PLUGIN DEFINITION
     // ==============================
@@ -1133,7 +1143,7 @@
         nodeIndent: 16,
         language: 'en',
         inputWidth: '60%',
-        cache: true,
+        cache: 2,
         readonly: false,
         multiselect: false,
         manyroots: false,
@@ -1146,11 +1156,11 @@
                 cancel: 'Cancel',
                 action: 'Action',
                 actions: {
-                    addBefore: 'Add before',
-                    addAfter: 'Add after',
-                    addFirstChild: 'Add first child',
-                    addLastChild: 'Add last child',
-                    edit: 'Edit',
+                    createBefore: 'Create before',
+                    createAfter: 'Create after',
+                    createFirstChild: 'Create first child',
+                    createLastChild: 'Create last child',
+                    update: 'Update',
                     'delete': 'Delete'
                 },
                 messages: {
@@ -1163,25 +1173,25 @@
         },
         defaultActions: [
             {
-                name: '{addBefore}',
+                name: '{createBefore}',
                 event: function (oNode, oManager) {
                     oNode.add('before', 'default');
                 }
             },
             {
-                name: '{addAfter}',
+                name: '{createAfter}',
                 event: function (oNode, oManager) {
                     oNode.add('after', 'default');
                 }
             },
             {
-                name: '{addFirstChild}',
+                name: '{createFirstChild}',
                 event: function (oNode, oManager) {
                     oNode.add('firstChild', 'default');
                 }
             },
             {
-                name: '{addLastChild}',
+                name: '{createLastChild}',
                 event: function (oNode, oManager) {
                     oNode.add('lastChild', 'default');
                 }
@@ -1190,7 +1200,7 @@
                 divider: true
             },
             {
-                name: '{edit}',
+                name: '{update}',
                 event: function (oNode, oManager) {
                     oNode.makeEditable();
                 }

@@ -223,6 +223,11 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 
 + `actions` (Array) - zestaw akcji, które mają zostać dodane po ostatniej pozycji określonej w parametrze `defaultActions`. Więcej informacji na temat wymaganego formatu danych znajduje się w opisie parametru `defaultActions`.
 
++ `cache (Integer)` - określa czy aktualny stan węzłów ma być przechowywany w pamięci podręcznej. Parametr może przyjąć wartość:
+  + 0 - mechanizm wyłączony,
+  + 1 - odwzorowanie tylko pobranych węzłów. W momencie operacji CUD lub przenosin stan jest resetowany,
+  + 2 - pełne odwzorowanie.
+
 + `classes` (Object) - parametr zawiera zestaw klas CSS wykorzystanych przy budowie interfejsu użytkownika. Nadpisanie wartości musi wiązać się ze zmianami w pliku CSS.
 
 + `defaultActions` (Array) - zestaw domyślnych akcji typu CUD. Zawartość parametru winna być tablicą założoną z obiektów o następującym formacie:
@@ -325,7 +330,3 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 ## Część serwerowa
 
 GTreeTable oferuję obsługę jedynie z poziomu JavaScript. Za część serwerową mogą posłużyć specjalne dodatki frameworka Yii tj. [Yii2-GTreeTable](https://github.com/gilek/Yii2-GTreeTable) lub [Yii-GTreeTable](https://github.com/gilek/Yii-GTreeTable). Jeśli na co dzień, nie używasz tego oprogramowania, to nie ma powodów do obaw. W najbliższym czasie zostanie przygotowana specjalna biblioteka, napisana w natywnym PHP, przeznaczona od realizacji tego zadania.
-
-## Ograniczenia
-
-Na obecną chwilę GTreeTable nie przechowuje wcześniej pobranych węzłów.
