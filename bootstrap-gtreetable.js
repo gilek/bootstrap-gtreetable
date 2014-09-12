@@ -122,12 +122,12 @@
             return selectedNodes;
         },
 
-        getSourceNodes: function (nodeId) {
+        getSourceNodes: function (nodeId, force) {
             var that = this,
                 oNode = this.getNodeById(nodeId),
                 cached = nodeId > 0 && this.options.cache > 0;
                 
-            if (cached) {
+            if (cached && force !== true) {
                 var data = this.cacheManager.get(oNode);
                 if (data !== undefined) {
                     return data;
@@ -451,7 +451,9 @@
 
             this.$ceIcon.click(function (e) {
                 if (!that.isExpanded()) {
-                    that.expand();
+                    that.expand({
+                        isAltPressed: e.altKey
+                    });
                 } else {
                     that.collapse();
                 }
@@ -488,7 +490,6 @@
                         containerWorkspace = containerHeight - (ui.helper.outerHeight() / 2),
                         movePosition = undefined,
                         pointerOffset = {left: that.manager.$tree.offset().left + 5 };
-
 
                     if (draggableOffsetTop  <= (containerWorkspace * 0.3)) {
                         movePosition = 'before'; 
@@ -608,6 +609,7 @@
             var oNode = this, 
                     prevNode = oNode,
                 settings = $.extend({}, {
+                isAltPressed: false,
                 onAfterFill: function (oNode, data) {
                     oNode.isExpanded(true);
                     if (data.length === 0) {
@@ -620,7 +622,7 @@
                 }
             },options);
 
-            $.when(this.manager.getSourceNodes(oNode.id)).done(function (data) {
+            $.when(this.manager.getSourceNodes(oNode.id, settings.isAltPressed)).done(function (data) {
                 for(var x in data) {
                     var newNode = new GTreeTableNode(data[x], oNode.manager);
                     oNode.insertIntegral(newNode, prevNode);

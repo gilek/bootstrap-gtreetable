@@ -4,6 +4,8 @@ GTreeTable jest rozszerzeniem frameworka [Tweeter Bootstrap 3](http://getbootstr
 
 Dzięki skryptowi możliwe staje się tworzenie oraz zarządzanie drzewem o nieograniczonym stopniu zagnieżdżenia.
 
+Kod wersji 2 napisany został całkowicie od zera. Zaowocowało to implementacją takich funkcji jak: zaawansowany mechanizmu pamięci podręcznej, przenoszenie węzłów metodą drag and drop, czy sortowanie z poziomu JavaScript.
+
 ![](http://gilek.net/images/gtt2-demo.png)
 
 ## Środowisko
@@ -217,6 +219,15 @@ jQuery('#gtreetable').gtreetable({
 
 W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas jej wartość pozostaje niezmieniona w języku angielskim.
 
+### Mechanizm pamięci podręcznej
+
+W stosunku do wersji 1.x, mechanizm pamięci podręcznej został w znacznym stopniu udoskonalony. Możliwa staje się praca w 3 trybach:
++ 0 - mechanizm wyłączony,
++ 1 - przechowywane są informacje o węzłach potomnych. Po wykonaniu operacji CUD lub przenoszenia, wymagane jest ponowne pobranie informacji z bazy danych,
++ 2 - podobnie jak w przypadku trybu 1 z tą różnicą, że wszystkie operacje na węzłach mają swoje odwzorowanie w pamięci podręcznej.
+
+Istnieje możliwość wymuszenia pobrania najnowszych danych, poprzez wciśnięcie klawisza Alt w momencie rozwijania węzła.
+
 ## <a name="konfiguracja"></a>Konfiguracja
 
 ### Parametry
@@ -225,7 +236,7 @@ W momencie, gdy jakaś pozycja z tłumaczenia nie zostanie odnaleziona, wówczas
 
 + `cache (Integer)` - określa czy aktualny stan węzłów ma być przechowywany w pamięci podręcznej. Parametr może przyjąć wartość:
   + 0 - mechanizm wyłączony,
-  + 1 - odwzorowanie tylko pobranych węzłów. W momencie operacji CUD lub przenosin stan jest resetowany,
+  + 1 - odwzorowanie pobranych węzłów. W momencie operacji CUD lub przenosin stan jest resetowany,
   + 2 - pełne odwzorowanie.
 
 + `classes` (Object) - parametr zawiera zestaw klas CSS wykorzystanych przy budowie interfejsu użytkownika. Nadpisanie wartości musi wiązać się ze zmianami w pliku CSS.
