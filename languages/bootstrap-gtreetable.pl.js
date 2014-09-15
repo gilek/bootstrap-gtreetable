@@ -23,12 +23,12 @@
         cancel: 'Anuluj',
         action: 'Akcja',
         actions: {
-            addBefore: 'Dodaj przed',
-            addAfter: 'Dodaj po',
-            addFirstChild: 'Dodaj pierwszy',
-            addLastChild: 'Dodaj ostatni',
-            edit: 'Edytuj',
-            delete: 'Usuń'       
+            createBefore: 'Dodaj przed',
+            createAfter: 'Dodaj po',
+            createFirstChild: 'Dodaj pierwszy',
+            createLastChild: 'Dodaj ostatni',
+            update: 'Edytuj',
+            'delete': 'Usuń'
         },
         messages: {
             onDelete: 'Czy na pewno?',
