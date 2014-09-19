@@ -6,7 +6,7 @@ Dzięki skryptowi możliwe staje się tworzenie oraz zarządzanie drzewem o nieo
 
 Kod wersji 2 napisany został całkowicie od zera. Zaowocowało to implementacją takich funkcji jak: zaawansowany mechanizmu pamięci podręcznej, przenoszenie węzłów metodą drag and drop, czy sortowanie z poziomu JavaScript.
 
-Działanie aplikacji można przetestować na stronie [dema projektu](http://gtreetable.gilek.net).
+Działanie aplikacji można przetestować na stronie [demo projektu](http://gtreetable.gilek.net).
 
 ![](http://gilek.net/images/gtt2-demo.png)
 
