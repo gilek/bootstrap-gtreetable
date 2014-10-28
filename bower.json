@@ -5,6 +5,7 @@
     "bootstrap-gtreetable.js",
     "gtreetable.css"
   ],
+  "ignore" : [],
   "authors": [
     "Maciej Kłak <klak.maciej@gmail.com> (http://gilek.net)"
   ],  
