@@ -6,7 +6,7 @@ Thanks to the script it`s possible to create and manage tree with unlimited nest
 
 Version 2 of code was completly rewrite and now it's possible to use such functions as: advanced cache, moving nodes by Drag & Drop method, or sorting directly from JavaScript level.
 
-Test available on [demo project](http://gtreetable.gilek.net).
+Test available on [demo project](http://gtreetable2.gilek.net).
 
 ![](http://gilek.net/images/gtt2-demo.png)
 
