@@ -6,7 +6,7 @@ Dzięki skryptowi możliwe staje się tworzenie oraz zarządzanie drzewem o nieo
 
 Kod wersji 2 napisany został całkowicie od zera. Zaowocowało to implementacją takich funkcji jak: zaawansowany mechanizmu pamięci podręcznej, przenoszenie węzłów metodą drag and drop, czy sortowanie z poziomu JavaScript.
 
-Działanie aplikacji można przetestować na stronie [demo projektu](http://gtreetable.gilek.net).
+Działanie aplikacji można przetestować na stronie [demo projektu](http://gtreetable2.gilek.net).
 
 ![](http://gilek.net/images/gtt2-demo.png)
 
@@ -99,10 +99,10 @@ jQuery('#gtreetable').gtreetable({
 ```
 
 Warto nadmienić, że wstawianie nowego węzła może odbywać się:
-+ przed wskazanym węzłem (`"before"`),
-+ po wskazanym węźle (`"after"`),
-+ jak pierwsze dziecko (`"firstChild"`),
-+ jako ostatnie dziecko (`"lastChild"`).
++ przed wskazanym węzłem (`before`),
++ po wskazanym węźle (`after`),
++ jak pierwsze dziecko (`firstChild`),
++ jako ostatnie dziecko (`lastChild`).
 
 ### Przenoszenie
 
@@ -111,9 +111,9 @@ Przenoszenie węzłów wewnątrz drzewa realizowane jest z wykorzystaniem metody
 Domyślnie mechanizm jest wyłączony, aby go aktywować należy ustawić parametr `draggable` na wartość true oraz zdefiniować zdarzenie `onMove`. 
 
 W momencie przeciągania węzła, jego nowa lokalizacja oznaczana jest poprzez pomocniczy wskaźnik, które może być umieszczony:
-+ przed  węzłem (`"before"`),
-+ jako ostatnie dziecko węzła (`"lastChild"`),
-+ po węźle (`"after"`).
++ przed  węzłem (`before`),
++ jako ostatnie dziecko węzła (`lastChild`),
++ po węźle (`after`).
  
 ![](http://gilek.net/images/gtt2-pointer.png)
 
