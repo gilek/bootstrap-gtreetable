@@ -341,4 +341,4 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
 
 ## Server side
 
-GTreeTable offer supports only in JavaScript level. Special extensions of Yii framework [Yii2-GTreeTable](https://github.com/gilek/Yii2-GTreeTable) or [Yii-GTreeTable](https://github.com/gilek/Yii-GTreeTable) can be use as server side application. Even if you don't use this software every day, don't worry in the near future will be prepared special library (written in native PHP), designed to realize this task.
+GTreeTable offer supports only in JavaScript level. Special extensions of Yii framework [yii2-gtreetable](https://github.com/gilek/yii2-gtreetable) or [yii-gtreetable](https://github.com/gilek/yii-gtreetable) can be use as server side application. Even if you don't use this software every day, don't worry in the near future will be prepared special library (written in native PHP), designed to realize this task.
