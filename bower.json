@@ -1,10 +1,19 @@
 {
   "name": "bootstrap-gtreetable",
-  "version": "2.0a",
+  "description": "Extension of Tweeter Bootstrap 3 framework which allows to use tree structure inside HTML table.",
+  "main": [
+    "bootstrap-gtreetable.js",
+    "gtreetable.css"
+  ],
+  "authors": [
+    "Maciej Kłak <klak.maciej@gmail.com> (http://gilek.net)"
+  ],  
+  "license": "Apache-2.0",
   "keywords": [
     "tree", 
     "boostrap",
     "twitter",
-    "extension"
+    "extension",
+    "nested"
   ]
 }
