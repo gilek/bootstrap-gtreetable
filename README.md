@@ -97,10 +97,10 @@ jQuery('#gtreetable').gtreetable({
 ```
 
 The new node may be added in various locations:
-+ before chosen node (`"before"`),
-+ after chosen node (`"after"`),
-+ as a first child (`"firstChild"`),
-+ as a last child (`"lastChild"`).
++ before chosen node (`before`),
++ after chosen node (`after`),
++ as a first child (`firstChild`),
++ as a last child (`lastChild`).
 
 ### Moving
 
@@ -108,9 +108,9 @@ Moving nodes may be realized by using Drag and Drop method.
 By default mechanism is disabled, to activate it `draggable` parameter need to be set on true value. Also you need to define `onMove` event. 
 
 At the moment of node dragging, its new locations is marked by pointer with may be located:
-+ before the node (`"before"`),
-+ as a last child (`"lastChild"`), 
-+ after the node (`"after"`).
++ before the node (`before`),
++ as a last child (`lastChild`), 
++ after the node (`after`).
 
 ![](http://gilek.net/images/gtt2-pointer.png)
 
