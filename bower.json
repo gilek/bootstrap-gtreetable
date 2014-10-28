@@ -22,5 +22,9 @@
     "extension",
     "nested"
   ],
+  "dependencies": {
+    "jquery" : ">=1.7.1",
+    "bootstrap" : ">=3.0 <4.0"
+  },
   "homepage": "https://github.com/gilek/bootstrap-gtreetable"
 }
