@@ -342,4 +342,4 @@ Istnieje możliwość wymuszenia pobrania najnowszych danych, poprzez wciśnięc
 
 ## Część serwerowa
 
-GTreeTable oferuję obsługę jedynie z poziomu JavaScript. Za część serwerową mogą posłużyć specjalne dodatki frameworka Yii tj. [Yii2-GTreeTable](https://github.com/gilek/Yii2-GTreeTable) lub [Yii-GTreeTable](https://github.com/gilek/Yii-GTreeTable). Jeśli na co dzień, nie używasz tego oprogramowania, to nie ma powodów do obaw. W najbliższym czasie zostanie przygotowana specjalna biblioteka, napisana w natywnym PHP, przeznaczona od realizacji tego zadania.
+GTreeTable oferuję obsługę jedynie z poziomu JavaScript. Za część serwerową mogą posłużyć specjalne dodatki frameworka Yii tj. [yii2-gtreetable](https://github.com/gilek/yii2-gtreetable) lub [yii-gtreetable](https://github.com/gilek/yii-gtreetable). Jeśli na co dzień, nie używasz tego oprogramowania, to nie ma powodów do obaw. W najbliższym czasie zostanie przygotowana specjalna biblioteka, napisana w natywnym PHP, przeznaczona od realizacji tego zadania.
