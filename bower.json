@@ -13,7 +13,7 @@
   "authors": [
     "Maciej Kłak <klak.maciej@gmail.com> (http://gilek.net)"
   ],
-  "license": "Apache-2.0",
+  "license": "MIT",
   "keywords": [
     "tree",
     "boostrap",
