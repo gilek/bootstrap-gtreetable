@@ -5,6 +5,12 @@
     "bootstrap-gtreetable.js",
     "gtreetable.css"
   ],
+  "ignore" : [
+    "README.md",
+    "README_pl.md",
+    "bower.json",    
+    "gtreetable.less"
+  ],
   "authors": [
     "Maciej Kłak <klak.maciej@gmail.com> (http://gilek.net)"
   ],
