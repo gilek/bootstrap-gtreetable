@@ -1,6 +1,5 @@
 {
   "name": "bootstrap-gtreetable",
-  "description": "Extension of Tweeter Bootstrap 3 framework which allows to use tree structure inside HTML table.",
   "main": [
     "bootstrap-gtreetable.js",
     "gtreetable.css"
