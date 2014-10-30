@@ -296,7 +296,7 @@ Istnieje możliwość wymuszenia pobrania najnowszych danych, poprzez wciśnięc
     }
     ```
  
-+ `source` (callback (Integer id)) - funkcja musi zwracać adres URL odpowiedzialny za pobieranie węzłów z bazy danych.
++ `source` (callback (Integer id))<a name="source"></a> - funkcja musi zwracać adres URL odpowiedzialny za pobieranie węzłów z bazy danych.
     
     Jeśli ID = 0, wówczas powinny zostać zwrócone korzenie drzewa.
     
