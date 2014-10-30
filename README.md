@@ -294,7 +294,7 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
     ```
  
 
-+ `source` (callback (Integer id)) - function must retunf URL address, responsible for getting nodes from data base.
++ `source` (callback (Integer id))<a name="source"></a> - function must retunf URL address, responsible for getting nodes from data base.
 
     If ID = 0, then tree roots should be returned.
     
