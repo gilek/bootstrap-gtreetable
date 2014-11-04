@@ -1,8 +1,9 @@
-/* =========================================================
- * bootstrap-gtreetable.pl.js
- * http://gtreetable2.gilek.net
- * =========================================================
- * Copyright 2014 Maciej "Gilek" Kłak
+/* =========================================================!
+ * bootstrap-gtreetable v2.1.0-alpha
+ * https://github.com/gilek/bootstrap-gtreetable
+ * ========================================================= 
+ * Copyright 2014 Maciej Kłak
+ * Licensed under MIT (https://github.com/gilek/bootstrap-gtreetable/blob/master/LICENSE)
  * ========================================================= */
 
 (function( $ ) {

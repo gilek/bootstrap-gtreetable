@@ -1,0 +1,24 @@
+{
+    "name": "bootstrap-gtreetable",
+    "version": "2.1.0-alpha",
+    "devDependencies": {
+        "grunt": "0.4.5",
+        "grunt-cli": "0.1.13",
+        "grunt-contrib-clean": "0.6.0",
+        "grunt-contrib-less": "0.12.0",
+        "grunt-contrib-uglify": "0.6.0",
+        "grunt-banner": "0.2.3",
+        "grunt-contrib-cssmin": "0.10.0",
+        "grunt-contrib-copy": "0.7.0",
+        "bootstrap": "3.3.0"
+    },
+    "scripts": {
+        "test": "grunt --verbose"
+    },
+    "author": "Maciej Kłak",
+    "homepage": "https://github.com/gilek/bootstrap-gtreetable",
+    "license": {
+        "type": "MIT",
+        "url": "https://github.com/gilek/bootstrap-gtreetable/blob/master/LICENSE"
+    }
+}

@@ -1,3 +1,11 @@
+/* =========================================================!
+ * bootstrap-gtreetable v2.1.0-alpha
+ * https://github.com/gilek/bootstrap-gtreetable
+ * ========================================================= 
+ * Copyright 2014 Maciej Kłak
+ * Licensed under MIT (https://github.com/gilek/bootstrap-gtreetable/blob/master/LICENSE)
+ * ========================================================= */
+
 /* copy of .glyphicon */
 .gtreetable .icon {
   position: relative;
@@ -9,9 +17,6 @@
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-.gtreetable .icon:empty {
-  width: 1em;
 }
 .gtreetable .node-name {
   line-height: 28px;
@@ -46,6 +51,7 @@
 .gtreetable .node-expanded .node-icon-ce {
   -webkit-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 .gtreetable .node-hovered {
