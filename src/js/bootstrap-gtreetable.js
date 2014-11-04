@@ -475,12 +475,12 @@
             });
             
             if (that.manager.options.draggable === true) {
-                function getMoveData(ui, $droppable) {
+                var getMoveData = function (ui, $droppable) {
                     var draggableOffsetTop = ui.offset.top - $droppable.offset().top,
                         containerOffsetTop = $droppable.offset().top,
                         containerHeight = $droppable.outerHeight(),
                         containerWorkspace = containerHeight - (ui.helper.outerHeight() / 2),
-                        movePosition = undefined,
+                        movePosition,
                         pointerOffset = {left: that.manager.$tree.offset().left + 5 };
 
                     if (draggableOffsetTop  <= (containerWorkspace * 0.3)) {
@@ -497,7 +497,7 @@
                         position: movePosition,
                         pointerOffset: pointerOffset
                     };
-                }
+                };
              
                 this.$node
                     .draggable( {
@@ -510,7 +510,9 @@
                         cursorAt: {top:0, left: 0 },
                         handle: '.'+ that.manager.options.classes.handleIcon,
                         start: function (e) {
-                            if (!$.browser.webkit) $(this).data("bs.gtreetable.gtreetablenode.scrollTop", $(window).scrollTop());
+                            if (!$.browser.webkit) {
+								$(this).data("bs.gtreetable.gtreetablenode.scrollTop", $(window).scrollTop());
+							}
                         },
                         stop: function (e) {
                             that.manager.isNodeDragging(false);
@@ -682,21 +684,23 @@
         },
         
         insert: function (position, oRelatedNode) {
-            var oNode = this;
+            var oNode = this,
+				oLastChild,
+				oContext;
             if (position === 'before') {
                 oRelatedNode.$node.before(oNode.$node);
             } else if (position === 'after') {
-                var oContext = oRelatedNode;
+                oContext = oRelatedNode;
                 if (oRelatedNode.isExpanded()) {
-                    var oLastChild = oRelatedNode.getDescendants({ depth: 1, index: -1, includeNotSaved: true });
+                    oLastChild = oRelatedNode.getDescendants({ depth: 1, index: -1, includeNotSaved: true });
                     oContext = oLastChild === undefined ? oContext : oLastChild;
                 }
                 oContext.$node.after(oNode.$node);
             } else if (position === 'firstChild') {
                 this.manager.getNodeById(oRelatedNode.id).$node.after(oNode.$node);
             } else if (position === 'lastChild') {
-                var oLastChild = oRelatedNode.getDescendants({ depth: 1, index: -1, includeNotSaved: true });
-                var oContext = oLastChild === undefined ? oRelatedNode : oLastChild;
+                oLastChild = oRelatedNode.getDescendants({ depth: 1, index: -1, includeNotSaved: true });
+                oContext = oLastChild === undefined ? oRelatedNode : oLastChild;
                 oContext.$node.after(oNode.$node);
             } else {
                 throw "Wrong position.";
@@ -839,7 +843,7 @@
             // nie ma rodzenstwa = sortowanie nie jest potrzebne
             if (oSiblings.length > 0) {
                 var oDescendants = !oNode.isExpanded() ? [] : oNode.getDescendants({ depth: -1, includeNotSaved: true }),
-                    oRelated = undefined;
+                    oRelated;
                 
                 $.each(oSiblings, function () {
                     if (oNode.manager.options.sort(oNode, this) === -1) {
@@ -999,7 +1003,6 @@
                         
                     default:
                         throw "Wrong method.";
-                        break;
                 }
             }            
         },
@@ -1046,7 +1049,7 @@
             
             if (this.manager.options.cache > 1) {
                 var data = this.get(oParentNode),
-                    position = undefined;
+                    position;
                 
                 // pobieranie pozycji
                 $.each(data, function(index) {
