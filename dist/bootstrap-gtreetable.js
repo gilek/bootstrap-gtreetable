@@ -200,7 +200,7 @@
     function GTreeTableNode(data, gtreetable) {
         this.manager = gtreetable;
 
-        this.level = data.level;
+        this.level = parseInt(data.level);
         this.parent = data.parent;
         this.name = data.name;
         this.type = data.type;
