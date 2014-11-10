@@ -1,12 +1,4 @@
 /* ========================================================= 
- * bootstrap-gtreetable v2.1.0-alpha
- * https://github.com/gilek/bootstrap-gtreetable
- * ========================================================= 
- * Copyright 2014 Maciej Kłak
- * Licensed under MIT (https://github.com/gilek/bootstrap-gtreetable/blob/master/LICENSE)
- * ========================================================= */
-
-/* ========================================================= 
  * Russian translation by Dunaevsky Maxim
  * ========================================================= */
 
