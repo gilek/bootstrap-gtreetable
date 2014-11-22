@@ -483,7 +483,7 @@
                     var draggableOffsetTop = ui.offset.top - $droppable.offset().top,
                         containerOffsetTop = $droppable.offset().top,
                         containerHeight = $droppable.outerHeight(),
-                        containerWorkspace = containerHeight - (ui.helper.outerHeight() / 2),
+                        containerWorkspace = containerHeight - Math.round(ui.helper.outerHeight() / 2),
                         movePosition,
                         pointerOffset = {left: that.manager.$tree.offset().left + 5 };
 
@@ -492,11 +492,12 @@
                         pointerOffset.top = (containerOffsetTop + 3); 
                     } else if (draggableOffsetTop  <= (containerWorkspace * 0.7)) {
                         movePosition = 'lastChild';
-                        pointerOffset.top = containerOffsetTop + Math.round(containerWorkspace / 2);
+                        pointerOffset.top = containerOffsetTop + (containerWorkspace / 2);
                     } else {
                         movePosition = 'after';
                         pointerOffset.top = containerOffsetTop + containerWorkspace;
                     }                    
+                    pointerOffset.top += 2;
                     return {
                         position: movePosition,
                         pointerOffset: pointerOffset
