@@ -97,10 +97,7 @@
             this.isNodeDragging(false);
         }
         this.init();
-        
     }
-
-    GTreeTable.prototype.VERSION = '2.0a';
 
     GTreeTable.prototype = {
 
@@ -133,11 +130,9 @@
                     return data;
                 }
             }
-
-            return $.ajax({
-                type: 'GET',
-                url: that.options.source(nodeId),
-                dataType: 'json',
+            
+            var sourceOptions = this.options.source(nodeId);
+            var defaultSourceOptions = {
                 beforeSend: function () {
                     if (nodeId > 0) {
                         oNode.isLoading(true);
@@ -151,7 +146,7 @@
                     if (typeof that.options.sort === "function") {
                         nodes.sort(that.options.sort);
                     }
-                    
+
                     if (cached) {
                         that.cacheManager.set(oNode, nodes);
                     }
@@ -164,8 +159,9 @@
                         oNode.isLoading(false);
                     }
                 }
-            });
-            
+            };
+
+            return $.ajax($.extend({}, defaultSourceOptions, sourceOptions));
         },
         
         init: function () {
@@ -571,7 +567,7 @@
         save: function () {
             var oNode = this;
             if ($.isFunction(oNode.manager.options.onSave)) {
-                $.when(oNode.manager.options.onSave(oNode)).done(function (data) {
+                $.when($.ajax(oNode.manager.options.onSave(oNode))).done(function (data) {
                     oNode._save(data);
                 });
             } else {
@@ -693,8 +689,9 @@
         
         insert: function (position, oRelatedNode) {
             var oNode = this,
-				oLastChild,
-				oContext;
+                oLastChild,
+                oContext;
+        
             if (position === 'before') {
                 oRelatedNode.$node.before(oNode.$node);
             } else if (position === 'after') {
@@ -727,7 +724,7 @@
             var oNode = this;
 
             if (oNode.isSaved() && $.isFunction(oNode.manager.options.onDelete)) {
-                $.when(oNode.manager.options.onDelete(oNode)).done(function () {
+                $.when($.ajax(oNode.manager.options.onDelete(oNode))).done(function () {
                     oNode._remove();
                 });
             } else {
@@ -781,7 +778,7 @@
             }
             
             if ($.isFunction(oNode.manager.options.onMove)) {
-                $.when(oNode.manager.options.onMove(oNode, oDestination, position)).done(function (data) {
+                $.when($.ajax(oNode.manager.options.onMove(oNode, oDestination, position))).done(function (data) {
                     oNode._move(oDestination, position); 
                 });
             } else {
