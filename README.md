@@ -39,8 +39,16 @@ Till now aplication was test on following browsers:
     ```javascript
     jQuery('#gtreetable').gtreetable({
       'source': function (id) {
-        return 'nodeChildren' + '?id=' + id;
-      }
+	      return {
+	        type: 'GET',
+	        url: 'nodeChildren',
+	        data: { 'id': id },        
+	        dataType: 'json',
+	        error: function(XMLHttpRequest) {
+	          alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+	        }
+	      }
+	    }
     });
     ```
 
@@ -58,19 +66,27 @@ More about action format find in [configuration](#configuration) section.
 
 ### CUD
 
-Moment of saving and deleting node can goes together witch server communication by AJAX. Responsible actions: `onSave` and `onDelete`. It's should be functions that return [jQuery.ajax](http://api.jquery.com/jquery.ajax/) object.
+Moment of saving and deleting node can goes together witch server communication by AJAX. Responsible actions: `onSave` and `onDelete`. It's should be functions that return [jQuery.ajax](http://api.jquery.com/jquery.ajax/) settings.
 
 Example configuration:
 
 ```javascript
 jQuery('#gtreetable').gtreetable({
   'source': function (id) {
-    return 'nodeChildren' + '?id=' + id;
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'onSave':function (oNode) {
-    return jQuery.ajax({
+    return {
       type: 'POST',
-      url: !oNode.isSaved() ? 'nodeCreate' : 'nodeUpdate?id=' + oNoe.getId(),
+      url: !oNode.isSaved() ? 'nodeCreate' : 'nodeUpdate?id=' + oNode.getId(),
       data: {
         parent: oNode.getParent(),
         name: oNode.getName(),
@@ -81,17 +97,17 @@ jQuery('#gtreetable').gtreetable({
       error: function(XMLHttpRequest) {
         alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
       }
-  	});
+  	};
   },
   'onDelete':function (oNode) {
-    return jQuery.ajax({
+    return {
       type: 'POST',
       url: 'nodeDelete?id=' + oNode.getId(),
       dataType: 'json',
       error: function(XMLHttpRequest) {
         alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
       }
-    });
+    };
   }
 });
 ```
@@ -125,11 +141,19 @@ Example configuration:
 ```javascript
 jQuery('#gtreetable').gtreetable({
   'source': function (id) {
-    return 'nodeChildren' + '?id=' + id;
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'draggable': true,
   'onMove': function (oSource, oDestination, position) {
-    return jQuery.ajax({
+    return {
       type: 'POST',
       url: 'nodeMove?id=' + oNode.getId(),
       data: {
@@ -140,7 +164,7 @@ jQuery('#gtreetable').gtreetable({
       error: function(XMLHttpRequest) {
         alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
       }
-    }); 
+    }; 
   }    
 });
 ```
@@ -167,7 +191,15 @@ Working of sorting function is the same as in case of [table sorting](https://de
 ```javascript
 jQuery('#gtreetable').gtreetable({
   'source': function (id) {
-    return 'nodeChildren' + '?id=' + id;
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'sort': function (a, b) {          
     var aName = a.name.toLowerCase();
@@ -185,8 +217,16 @@ Example configuration:
 
 ```javascript
 jQuery('#gtreetable').gtreetable({
-  'source': function(id) {
-    return 'nodeChildren' + '?id=' + id;
+  'source': function (id) {
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'types': { default: 'glyphicon glyphicon-folder-open'}
 });
@@ -208,8 +248,16 @@ Example configuration:
 
 ```javascript
 jQuery('#gtreetable').gtreetable({
-  'source': function(id) {
-    return 'nodeChildren' + '?id=' + id;
+  'source': function (id) {
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'language': 'pl'
 });
@@ -294,7 +342,7 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
     ```
  
 
-+ `source` (callback (Integer id))<a name="source"></a> - function must retunf URL address, responsible for getting nodes from data base.
++ `source` (callback (Integer id))<a name="source"></a> - function must return `jQuery.ajax` settings, responsible for getting nodes from data base.
 
     If ID = 0, then tree roots should be returned.
     
@@ -317,11 +365,11 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
 
 ### Events
 
-+ `onDelete(GTreeTableNode node)` - event triggering at the node deleting moment, must return `jQuery.ajax` object.
++ `onDelete(GTreeTableNode node)` - event triggering at the node deleting moment, must return `jQuery.ajax` settings.
 
-+ `onMove(GTreeTableNode node, GTreeTableNode destination, string position)` - event triggering at the node moving moment, must return `jQuery.ajax` object.
++ `onMove(GTreeTableNode node, GTreeTableNode destination, string position)` - event triggering at the node moving moment, must return `jQuery.ajax` settings.
 
-+ `onSave(GTreeTableNode node)` - event triggering at the node adding / edition moment. It must return `jQuery.ajax` object.
++ `onSave(GTreeTableNode node)` - event triggering at the node adding / edition moment. It must return `jQuery.ajax` settings.
 
 + `onSelect(GTreeTableNode node)` - event triggering at the node selecting moment.
 

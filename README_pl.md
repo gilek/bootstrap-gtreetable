@@ -39,7 +39,15 @@ Do tej pory, działanie aplikacji zostało przetestowane w przeglądarkach:
     ```javascript
     jQuery('#gtreetable').gtreetable({
       'source': function (id) {
-        return 'nodeChildren' + '?id=' + id;
+		    return {
+		      type: 'GET',
+		      url: 'nodeChildren',
+		      data: { 'id': id },        
+		      dataType: 'json',
+		      error: function(XMLHttpRequest) {
+		        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+		      }
+		    }
       }
     });
     ```
@@ -60,19 +68,27 @@ Informacje o formacie zefiniowania akcji znajdują się w części [konfiguracja
 
 ### CUD
 
-Momentowi zapisu węzła lub jego usuwania może towarzyszyć komunikacja z serwerem za pośrednictwem techniki AJAX. Odpowiedzialne są za to odpowiednio zdarzenia `onSave` oraz `onDelete`. W zamyśle, powinny one być funkcjami, które zwracają obiekt typu [jQuery.ajax](http://api.jquery.com/jquery.ajax/).
+Momentowi zapisu węzła lub jego usuwania może towarzyszyć komunikacja z serwerem za pośrednictwem techniki AJAX. Odpowiedzialne są za to odpowiednio zdarzenia `onSave` oraz `onDelete`. W zamyśle, powinny one być funkcjami, które zwracają ustawienia obiektu [jQuery.ajax](http://api.jquery.com/jquery.ajax/).
 
 Przykładowa konfiguracja:
 
 ```javascript
 jQuery('#gtreetable').gtreetable({
   'source': function (id) {
-    return 'nodeChildren' + '?id=' + id;
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'onSave':function (oNode) {
     return jQuery.ajax({
       type: 'POST',
-      url: !oNode.isSaved() ? 'nodeCreate' : 'nodeUpdate?id=' + oNoe.getId(),
+      url: !oNode.isSaved() ? 'nodeCreate' : 'nodeUpdate?id=' + oNode.getId(),
       data: {
         parent: oNode.getParent(),
         name: oNode.getName(),
@@ -129,7 +145,15 @@ Przykładowa konfiguracja:
 ```javascript
 jQuery('#gtreetable').gtreetable({
   'source': function (id) {
-    return 'nodeChildren' + '?id=' + id;
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'draggable': true,
   'onMove': function (oSource, oDestination, position) {
@@ -171,7 +195,15 @@ Działanie funkcji sortującej jest analogiczne, jak w przypadku [sortowania tab
 ```javascript
 jQuery('#gtreetable').gtreetable({
   'source': function (id) {
-    return 'nodeChildren' + '?id=' + id;
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'sort': function (a, b) {          
     var aName = a.name.toLowerCase();
@@ -190,7 +222,15 @@ Przykładowa konfiguracja:
 ```javascript
 jQuery('#gtreetable').gtreetable({
   'source': function(id) {
-    return 'nodeChildren' + '?id=' + id;
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'types': { default: 'glyphicon glyphicon-folder-open'}
 });
@@ -213,7 +253,15 @@ Przykładowa konfiguracja:
 ```javascript
 jQuery('#gtreetable').gtreetable({
   'source': function(id) {
-    return 'nodeChildren' + '?id=' + id;
+    return {
+      type: 'GET',
+      url: 'nodeChildren',
+      data: { 'id': id },        
+      dataType: 'json',
+      error: function(XMLHttpRequest) {
+        alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+      }
+    }
   },
   'language': 'pl'
 });
@@ -318,11 +366,11 @@ Istnieje możliwość wymuszenia pobrania najnowszych danych, poprzez wciśnięc
 
 ### Zdarzenia
 
-+ `onDelete(GTreeTableNode node)` - zdarzenie wywoływane w momencie usuwania węzła. Musi zwrócić obiekt typu `jQuery.ajax`.
++ `onDelete(GTreeTableNode node)` - zdarzenie wywoływane w momencie usuwania węzła. Musi zwrócić ustawienia obiektu typu `jQuery.ajax`.
 
-+ `onMove(GTreeTableNode node, GTreeTableNode destination, string position)` - zdarzenie wywoływane w momencie  przenoszenia węzła. Musi zwrócić obiekt typu `jQuery.ajax`.
++ `onMove(GTreeTableNode node, GTreeTableNode destination, string position)` - zdarzenie wywoływane w momencie  przenoszenia węzła. Musi zwrócić ustawienia obiektu typu `jQuery.ajax`.
 
-+ `onSave(GTreeTableNode node)` - zdarzenie wywoływane w momencie dodawania nowego / zmiany nazwy istniejącego węzła. Musi zwrócić obiekt typu `jQuery.ajax`.
++ `onSave(GTreeTableNode node)` - zdarzenie wywoływane w momencie dodawania nowego / zmiany nazwy istniejącego węzła. Musi zwrócić ustawienia obiektu typu `jQuery.ajax`.
   
 + `onSelect(GTreeTableNode node)` - zdarzenie wywoływane w momencie zaznaczenia węzła.
 
