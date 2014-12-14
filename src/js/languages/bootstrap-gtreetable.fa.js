@@ -1,7 +1,7 @@
 // Farsi Translation by EmadGhasemi.ir
 
 (function( $ ) {
-    $.fn.gtreetable.defaults.languages.fa = {
+    $.fn.gtreetable.defaults.languages['fa'] = {
         save: 'ذخیره سازی',
         cancel: 'انصراف',
         action: 'عملیات',

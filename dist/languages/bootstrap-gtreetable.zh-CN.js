@@ -9,7 +9,7 @@
 // Chinese Translation by Thinking Song
 
 (function( $ ) {
-    $.fn.gtreetable.defaults.languages.zh-CN = {
+    $.fn.gtreetable.defaults.languages['zh-CN'] = {
         save: '保存',
         cancel: '取消',
         action: '操作',
