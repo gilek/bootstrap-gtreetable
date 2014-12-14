@@ -1,5 +1,12 @@
-(function ($) {
+/* ========================================================= 
+ * bootstrap-gtreetable v2.1.0-alpha
+ * https://github.com/gilek/bootstrap-gtreetable
+ * ========================================================= 
+ * Copyright 2014 Maciej Kłak
+ * Licensed under MIT (https://github.com/gilek/bootstrap-gtreetable/blob/master/LICENSE)
+ * ========================================================= */
 
+(function ($) {
     // GTREETABLE CLASSES DEFINITION
     // =============================    
     function GTreeTable(element, options) {
@@ -130,17 +137,17 @@
                         oNode.isLoading(true);
                     }
                 },
-                success: function (nodes) {
-                    for (var x = 0; x < nodes.length; x += 1) {
-                        nodes[x].parent = nodeId;
+                success: function (data) {
+                    for (var x = 0; x < data.length; x += 1) {
+                        data[x].parent = nodeId;
                     }
 
                     if (typeof that.options.sort === "function") {
-                        nodes.sort(that.options.sort);
+                        data.sort(that.options.sort);
                     }
 
                     if (cached) {
-                        that.cacheManager.set(oNode, nodes);
+                        that.cacheManager.set(oNode, data);
                     }
                 },
                 error: function (XMLHttpRequest) {
@@ -393,7 +400,8 @@
         },
         
         attachEvents: function () {
-            var that = this;
+            var that = this,
+                selectLimit = parseInt(this.manager.options.selectLimit);
             
             this.$node.mouseover(function () {
                 if (!(that.manager.options.draggable === true && that.manager.isNodeDragging() === true)) {
@@ -407,35 +415,43 @@
                 that.isHovered(false);
             });
 
-            this.$name.click(function (e) {
-                if (that.isSelected()) {
-                    if ($.isFunction(that.manager.options.onUnselect)) {
-                        that.manager.options.onUnselect(that);
-                    }
-                    that.isSelected(false);
-                } else {
-                    var selectedNodes = that.manager.getSelectedNodes();
-                    if (that.manager.options.multiselect === false) {
-   
-                        if (selectedNodes.length === 1) {
-                            selectedNodes[0].isSelected(false);
+            
+            if (isNaN(selectLimit) === false && (selectLimit > 0 || selectLimit === -1) ) {
+                this.$name.click(function (e) {
+                    if (that.isSelected()) {
+                        if ($.isFunction(that.manager.options.onUnselect)) {
+                            that.manager.options.onUnselect(that);
                         }
+                        that.isSelected(false);
                     } else {
-                        if (!isNaN(that.manager.options.multiselect) && that.manager.options.multiselect === selectedNodes.length) {
-                            if ($.isFunction(that.options.onSelectOverflow)) {
+                        // -1 - unlimited
+                        // > 0 wskazane cos
+                        // 0 lub nieoreslone = wylaczone
+
+                        var selectedNodes = that.manager.getSelectedNodes();
+                        if (selectLimit === 1 && selectedNodes.length === 1) {
+                            selectedNodes[0].isSelected(false);
+                            selectedNodes = [];
+                        } else if (selectedNodes.length === selectLimit) {
+                            if ($.isFunction(that.manager.options.onSelectOverflow)) {
                                 that.options.onSelectOverflow(that);
                             }
                             e.preventDefault();
                         }
-                    }
 
-                    that.isSelected(true);
+                        if (selectedNodes.length < selectLimit) {
+                            that.isSelected(true);                            
+                        }
 
-                    if ($.isFunction(that.manager.options.onSelect)) {
-                        that.manager.options.onSelect(that);
+                        if ($.isFunction(that.manager.options.onSelect)) {
+                            that.manager.options.onSelect(that);
+                        }
                     }
-                }
-            });
+                });                
+            } else {
+                this.$name.click(function (e) { that.$ceIcon.click(); });
+            }
+
 
             this.$ceIcon.click(function (e) {
                 if (!that.isExpanded()) {
@@ -1140,7 +1156,7 @@
         inputWidth: '60%',
         cache: 2,
         readonly: false,
-        multiselect: false,
+        selectLimit: 1,
         manyroots: false,
         draggable: false,
         dragCanExpand: false,
