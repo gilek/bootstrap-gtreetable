@@ -415,7 +415,7 @@
                 that.isHovered(false);
             });
 
-            
+
             if (isNaN(selectLimit) === false && (selectLimit > 0 || selectLimit === -1) ) {
                 this.$name.click(function (e) {
                     if (that.isSelected()) {
@@ -424,10 +424,6 @@
                         }
                         that.isSelected(false);
                     } else {
-                        // -1 - unlimited
-                        // > 0 wskazane cos
-                        // 0 lub nieoreslone = wylaczone
-
                         var selectedNodes = that.manager.getSelectedNodes();
                         if (selectLimit === 1 && selectedNodes.length === 1) {
                             selectedNodes[0].isSelected(false);
@@ -439,7 +435,7 @@
                             e.preventDefault();
                         }
 
-                        if (selectedNodes.length < selectLimit) {
+                        if (selectedNodes.length < selectLimit || selectLimit === -1) {
                             that.isSelected(true);                            
                         }
 
