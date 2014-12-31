@@ -3,7 +3,7 @@
  * ========================================================= */
 
 (function ($) {
-    $.fn.gtreetable.defaults.languages['ru'] = {
+    $.fn.gtreetable.defaults.languages.ru = {
         save: 'Сохранить',
         cancel: 'Отмена',
         action: 'Действие',
