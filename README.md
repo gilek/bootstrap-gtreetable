@@ -306,7 +306,6 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
 
 + `dragCanExpand` (boolean) - define whether during node moving is possible to expand other nodes after choosing appropriate icon. 	
 
-
 + `draggable` (boolean) - define whether nodes can be moved. Parameter value changing on true is related with necessity of adding required [jQueryUI](http://jqueryui.com/) library:
   + core,
   + widget,
@@ -321,7 +320,7 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
 
 + `manyroots` (boolean) - define whether it's possible to create multiple nodes roots.
 
-+ `multiselect` (mixed) - define whether it's possible to indicate more then one node. If value of parameter is number, then is possible to indicate exactly the same number of nodes.
+//TODO + `selectLimit` (integer) - define whether it's possible to indicate more then one node. If value of parameter is number, then is possible to indicate exactly the same number of nodes.
 
 + `nodeIndent` (Integer) - Distance between node and its container. The value is multiplied, depending on node level.
 

@@ -1,6 +1,6 @@
 {
     "name": "bootstrap-gtreetable",
-    "version": "2.1.0-alpha",
+    "version": "2.2.0-alpha",
     "devDependencies": {
         "grunt": "0.4.5",
         "grunt-cli": "0.1.13",
