@@ -123,12 +123,12 @@
                 
             if (cached && force !== true) {
                 var data = this.cacheManager.get(oNode);
-                /*if (data !== undefined) {
-                    return {
-                       [that.options.nodesWrapper]: data 
-                    };
+                if (data !== undefined) {
+                    var temp = {};
+                    temp[that.options.nodesWrapper] = data;
+                    return temp;
 
-                }*/
+                }
             }
             
             var sourceOptions = this.options.source(nodeId);
@@ -630,7 +630,8 @@
                 }
             },options);
 
-            $.when(this.manager.getSourceNodes(oNode.id, settings.isAltPressed)).done(function (data) {
+            $.when(this.manager.getSourceNodes(oNode.id, settings.isAltPressed)).done(function (result) {
+                var data = result[oNode.manager.options.nodesWrapper];
                 for(var x in data) {
                     var newNode = new GTreeTableNode(data[x], oNode.manager);
                     oNode.insertIntegral(newNode, prevNode);
