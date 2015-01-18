@@ -171,7 +171,7 @@ jQuery('#gtreetable').gtreetable({
 
 ### Choosing
 
-To choose the node it's needed to click on its name. Depending on `multiselect` parameter it's possible to indicate one or more nodes.
+To choose the node it's needed to click on its name. Depending on `selectLimit` parameter it's possible to indicate one or more nodes.
 
 In this case it's worth to pay attention on a few events triggered in the moment of:
 + selecting node (`onSelect`),
