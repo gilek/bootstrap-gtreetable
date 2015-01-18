@@ -397,7 +397,7 @@
             this.$node.attr('data-parent', this.parent);
             this.$node.attr('data-level', this.level);
 
-            this.$indent.css('marginLeft', ((parseInt(this.level, 10)-1) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
+            this.$indent.css('marginLeft', (parseInt(this.level) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
             
             if (this.type !== undefined && this.manager.options.types && this.manager.options.types[this.type] !== undefined) {
                 this.$typeIcon.addClass(this.manager.options.types[this.type]).show();

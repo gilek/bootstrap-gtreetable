@@ -302,7 +302,7 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
     { divider: true }
     ```
 
-    When action label is surrounded by bracket i.e. `{actionEdit}` then its value is translated on `language` parameter language. 
+    When action label is surrounded by bracket and preceded by $ i.e. `${actionEdit}` then its value is translated on `language` parameter language. 
 
 + `dragCanExpand` (boolean) - define whether during node moving is possible to expand other nodes after choosing appropriate icon. 	
 
@@ -320,9 +320,14 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
 
 + `manyroots` (boolean) - define whether it's possible to create multiple nodes roots.
 
-//TODO + `selectLimit` (integer) - define whether it's possible to indicate more then one node. If value of parameter is number, then is possible to indicate exactly the same number of nodes.
++ `selectLimit` (Integer) - define nodes selection behavours:
+  + > 1 - indicate exactly the same number of nodes,
+  + 0 - selection disabled,
+  + -1 - unlimited selection.    
 
 + `nodeIndent` (Integer) - Distance between node and its container. The value is multiplied, depending on node level.
+
++ `nodesWrapper` (String) - define nodes wrapper property. Default `nodes`. (https://github.com/gilek/bootstrap-gtreetable/issues/9)[More info].
 
 + `readonly` (boolean) - determines whether executing action on node is possible or not.
 
