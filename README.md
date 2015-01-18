@@ -327,7 +327,7 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
 
 + `nodeIndent` (Integer) - Distance between node and its container. The value is multiplied, depending on node level.
 
-+ `nodesWrapper` (String) - define nodes wrapper property. Default `nodes`. (https://github.com/gilek/bootstrap-gtreetable/issues/9)[More info].
++ `nodesWrapper` (String) - define nodes wrapper property. Default `nodes`. [https://github.com/gilek/bootstrap-gtreetable/issues/9](More info).
 
 + `readonly` (boolean) - determines whether executing action on node is possible or not.
 
