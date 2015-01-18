@@ -377,7 +377,7 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
 
 + `onSelect(GTreeTableNode node)` - event triggering at the node selecting moment.
 
-+ `onSelectOverflow(GTreeTableNode node)` - event triggering when `multiselect` parameter is positive number and selecting another node would be related with overflow of defined quantity.
++ `onSelectOverflow(GTreeTableNode node)` - event triggering when `selectLimit` parameter is positive number and selecting another node would be related with overflow of defined quantity.
 
 + `onUnselect(GTreeTableNode node)` - event triggering at the moment when node is unselected.
 
