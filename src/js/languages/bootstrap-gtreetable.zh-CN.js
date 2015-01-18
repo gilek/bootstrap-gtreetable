@@ -1,15 +1,7 @@
-/* ========================================================= 
- * bootstrap-gtreetable v2.1.0-alpha
- * https://github.com/gilek/bootstrap-gtreetable
- * ========================================================= 
- * Copyright 2014 Maciej Kłak
- * Licensed under MIT (https://github.com/gilek/bootstrap-gtreetable/blob/master/LICENSE)
- * ========================================================= */
-
 // Chinese Translation by Thinking Song
 
 (function( $ ) {
-    $.fn.gtreetable.defaults.languages.zh-CN = {
+    $.fn.gtreetable.defaults.languages['zh-CN'] = {
         save: '保存',
         cancel: '取消',
         action: '操作',

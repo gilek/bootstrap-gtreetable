@@ -1,5 +1,5 @@
 /* ========================================================= 
- * bootstrap-gtreetable v2.1.0-alpha
+ * bootstrap-gtreetable v2.2.0-alpha
  * https://github.com/gilek/bootstrap-gtreetable
  * ========================================================= 
  * Copyright 2014 Maciej Kłak
@@ -7,79 +7,84 @@
  * ========================================================= */
 
 (function ($) {
-
     // GTREETABLE CLASSES DEFINITION
     // =============================    
     function GTreeTable(element, options) {
         this.options = options;
         this.$tree = $(element);
         this.language = this.options.languages[this.options.language] === undefined ?
-                this.options.languages.en :
-                $.extend({}, this.options.languages.en, this.options.languages[this.options.language]);
+            this.options.languages['en-US'] :
+            $.extend({}, this.options.languages['en-US'], this.options.languages[this.options.language]);
         this._isNodeDragging = false;
         this._lastId = 0;
+        
+        this.actions = [];
+        if (this.options.defaultActions !== null) {
+            this.actions = this.options.defaultActions;
+        }
+
+        if (this.options.actions !== undefined) {
+            this.actions.push.apply(this.actions, this.options.actions);
+        }        
         
         if (this.options.cache > 0) {
             this.cacheManager = new GTreeTableCache(this);
         }
         
         var lang = this.language;
+        this.template = this.options.template !== undefined ? this.options.template : 
+           '<table class="table gtreetable">' +
+           '<tr class="' + this.options.classes.node + ' ' + this.options.classes.collapsed + '">' +
+           '<td>' +
+           '<span>${draggableIcon}${indent}${ecIcon}${selectedIcon}${typeIcon}${name}</span>' +
+           '<span class="hide ' + this.options.classes.action + '">${input}${saveButton} ${cancelButton}</span>' +
+           '<div class="btn-group pull-right">${actionsButton}${actions}</div>' +
+           '</td>' +
+           '</tr>' +
+           '</table>';            
 
-        if (this.options.template === undefined) {
-            var template = '<table class="table gtreetable">' +
-                '<tr class="' + this.options.classes.node + ' ' + this.options.classes.collapsed + '">' +
-                '<td>' +
-                '<span>';
-
-            if (this.options.draggable === true) {
-                template += '<span class="' + this.options.classes.handleIcon + '">&zwnj;</span>' +
-                    '<span class="' + this.options.classes.draggablePointer + '">&zwnj;</span>';
-            } 
-
-            template += '<span class="' + this.options.classes.indent + '">&zwnj;</span>' +
-                '<span class="' + this.options.classes.ceIcon + ' icon"></span>' +
-                '<span class="' + this.options.classes.selectedIcon + ' icon"></span>' +
-                '<span class="' + this.options.classes.typeIcon + '"></span>' +                
-                '<span class="' + this.options.classes.name + '"></span>' +
-                '</span>' +
-                '<span class="hide ' + this.options.classes.action + '">' +
-                '<input type="text" name="name" value="" style="width: ' + this.options.inputWidth + '" class="form-control" />' +
-                '<button type="button" class="btn btn-sm btn-primary ' + this.options.classes.saveButton + '">' + lang.save + '</button> ' +
-                '<button type="button" class="btn btn-sm ' + this.options.classes.cancelButton + '">' + lang.cancel + '</button>' +
-                '</span>' +
-                '<div class="btn-group pull-right">' +
-                '<button type="button" class="btn btn-sm btn-default dropdown-toggle node-actions" data-toggle="dropdown">' + lang.action + ' <span class="caret"></span></button>' +
-                '<ul class="dropdown-menu" role="menu">' +
-                '<li role="presentation" class="dropdown-header">' + lang.action + '</li>';
-
-            this.actions = [];
-            if (this.options.defaultActions !== null) {
-                this.actions = this.options.defaultActions;
-            }
-
-            if (this.options.actions !== undefined) {
-                this.actions.push.apply(this.actions, this.options.actions);
-            }
+        this.templateParts = this.options.templateParts !== undefined ? this.options.templateParts :
+            {
+                draggableIcon: this.options.draggable === true ? '<span class="' + this.options.classes.handleIcon + '">&zwnj;</span><span class="' + this.options.classes.draggablePointer + '">&zwnj;</span>'  : '',
+                indent: '<span class="' + this.options.classes.indent + '">&zwnj;</span>',
+                ecIcon: '<span class="' + this.options.classes.ceIcon + ' icon"></span>',
+                selectedIcon: '<span class="' + this.options.classes.selectedIcon + ' icon"></span>',
+                typeIcon: '<span class="' + this.options.classes.typeIcon + '"></span>',
+                name: '<span class="' + this.options.classes.name + '"></span>',
+                input: '<input type="text" name="name" value="" style="width: ' + this.options.inputWidth + '" class="form-control" />',
+                saveButton: '<button type="button" class="btn btn-sm btn-primary ' + this.options.classes.saveButton + '">' + lang.save + '</button>',
+                cancelButton: '<button type="button" class="btn btn-sm ' + this.options.classes.cancelButton + '">' + lang.cancel + '</button>',
+                actionsButton: '<button type="button" class="btn btn-sm btn-default dropdown-toggle node-actions" data-toggle="dropdown">' + lang.action + ' <span class="caret"></span></button>',
+                actions: ''
+            };
+            
+        if (this.actions.length > 0) {
+            var templateActions = '<ul class="dropdown-menu" role="menu">' +
+            '<li role="presentation" class="dropdown-header">' + lang.action + '</li>';
 
             $.each(this.actions, function (index, action) {
                 if (action.divider === true) {
-                    template += '<li class="divider"></li>';
+                    templateActions += '<li class="divider"></li>';
                 } 
                 else {
-                    var matches = action.name.match(/\{([\w\W]+)\}/),
+                    var matches = action.name.match(/\$\{([\w\W]+)\}/),
                         name = matches !== null && matches[1] !== undefined && lang.actions[matches[1]] !== undefined ? lang.actions[matches[1]] : action.name;
-                    template += '<li role="presentation"><a href="#notarget" class="node-action-' + index + '" tabindex="-1">' + name + '</a></li>';
+                    templateActions += '<li role="presentation"><a href="#notarget" class="node-action-' + index + '" tabindex="-1">' + name + '</a></li>';
                 }
-            });
+            });        
 
-            template += '</ul>' +
-                    '</div>' +
-                    '</td>' +
-                    '</tr>' +
-                    '</table>';
-
-            this.options.template = template;
+            templateActions += '</ul>';
+            this.templateParts.actions = templateActions;
         }
+        
+        var template = this.template;
+
+        $.each(this.templateParts, function(index, value) {
+            template = template.replace('${'+index+'}', value);
+        });
+        
+        this.options.template = template;
+        
 
         if (this.$tree.find('tbody').length === 0) {
             this.$tree.append('<tbody></tbody>');
@@ -97,10 +102,7 @@
             this.isNodeDragging(false);
         }
         this.init();
-        
     }
-
-    GTreeTable.prototype.VERSION = '2.0a';
 
     GTreeTable.prototype = {
 
@@ -125,35 +127,39 @@
         getSourceNodes: function (nodeId, force) {
             var that = this,
                 oNode = this.getNodeById(nodeId),
-                cached = nodeId > 0 && this.options.cache > 0;
+                cached = (nodeId > 0 && this.options.cache > 0);
                 
             if (cached && force !== true) {
                 var data = this.cacheManager.get(oNode);
                 if (data !== undefined) {
-                    return data;
+                    var temp = {};
+                    temp[that.options.nodesWrapper] = data;
+                    return temp;
+
                 }
             }
-
-            return $.ajax({
-                type: 'GET',
-                url: that.options.source(nodeId),
-                dataType: 'json',
+            
+            var sourceOptions = this.options.source(nodeId);
+            var defaultSourceOptions = {
                 beforeSend: function () {
                     if (nodeId > 0) {
                         oNode.isLoading(true);
                     }
                 },
-                success: function (nodes) {
-                    for (var x = 0; x < nodes.length; x += 1) {
-                        nodes[x].parent = nodeId;
-                    }
+                success: function (result) {
+                    if (result[that.options.nodesWrapper] !== undefined) {
+                        data = result[that.options.nodesWrapper];
+                        for (var x = 0; x < data.length; x += 1) {
+                            data[x].parent = nodeId;
+                        }
 
-                    if (typeof that.options.sort === "function") {
-                        nodes.sort(that.options.sort);
-                    }
-                    
-                    if (cached) {
-                        that.cacheManager.set(oNode, nodes);
+                        if (typeof that.options.sort === "function") {
+                            data.sort(that.options.sort);
+                        }
+
+                        if (cached) {
+                            that.cacheManager.set(oNode, data);
+                        }
                     }
                 },
                 error: function (XMLHttpRequest) {
@@ -164,14 +170,16 @@
                         oNode.isLoading(false);
                     }
                 }
-            });
-            
+            };
+
+            return $.ajax($.extend({}, defaultSourceOptions, sourceOptions));
         },
         
         init: function () {
             var that = this;
 
-            this.getSourceNodes(0).done(function (data) {
+            this.getSourceNodes(0).done(function (result) {
+                var data = result[that.options.nodesWrapper];
                 for(var x in data) {
                     var oNewNode = new GTreeTableNode(data[x], that);
                     oNewNode.insertIntegral(oNewNode);
@@ -397,7 +405,7 @@
             this.$node.attr('data-parent', this.parent);
             this.$node.attr('data-level', this.level);
 
-            this.$indent.css('marginLeft', ((parseInt(this.level, 10)-1) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
+            this.$indent.css('marginLeft', (parseInt(this.level) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
             
             if (this.type !== undefined && this.manager.options.types && this.manager.options.types[this.type] !== undefined) {
                 this.$typeIcon.addClass(this.manager.options.types[this.type]).show();
@@ -405,7 +413,8 @@
         },
         
         attachEvents: function () {
-            var that = this;
+            var that = this,
+                selectLimit = parseInt(this.manager.options.selectLimit);
             
             this.$node.mouseover(function () {
                 if (!(that.manager.options.draggable === true && that.manager.isNodeDragging() === true)) {
@@ -419,35 +428,39 @@
                 that.isHovered(false);
             });
 
-            this.$name.click(function (e) {
-                if (that.isSelected()) {
-                    if ($.isFunction(that.manager.options.onUnselect)) {
-                        that.manager.options.onUnselect(that);
-                    }
-                    that.isSelected(false);
-                } else {
-                    var selectedNodes = that.manager.getSelectedNodes();
-                    if (that.manager.options.multiselect === false) {
-   
-                        if (selectedNodes.length === 1) {
-                            selectedNodes[0].isSelected(false);
+
+            if (isNaN(selectLimit) === false && (selectLimit > 0 || selectLimit === -1) ) {
+                this.$name.click(function (e) {
+                    if (that.isSelected()) {
+                        if ($.isFunction(that.manager.options.onUnselect)) {
+                            that.manager.options.onUnselect(that);
                         }
+                        that.isSelected(false);
                     } else {
-                        if (!isNaN(that.manager.options.multiselect) && that.manager.options.multiselect === selectedNodes.length) {
-                            if ($.isFunction(that.options.onSelectOverflow)) {
+                        var selectedNodes = that.manager.getSelectedNodes();
+                        if (selectLimit === 1 && selectedNodes.length === 1) {
+                            selectedNodes[0].isSelected(false);
+                            selectedNodes = [];
+                        } else if (selectedNodes.length === selectLimit) {
+                            if ($.isFunction(that.manager.options.onSelectOverflow)) {
                                 that.options.onSelectOverflow(that);
                             }
                             e.preventDefault();
                         }
-                    }
 
-                    that.isSelected(true);
+                        if (selectedNodes.length < selectLimit || selectLimit === -1) {
+                            that.isSelected(true);                            
+                        }
 
-                    if ($.isFunction(that.manager.options.onSelect)) {
-                        that.manager.options.onSelect(that);
+                        if ($.isFunction(that.manager.options.onSelect)) {
+                            that.manager.options.onSelect(that);
+                        }
                     }
-                }
-            });
+                });                
+            } else {
+                this.$name.click(function (e) { that.$ceIcon.click(); });
+            }
+
 
             this.$ceIcon.click(function (e) {
                 if (!that.isExpanded()) {
@@ -487,7 +500,7 @@
                     var draggableOffsetTop = ui.offset.top - $droppable.offset().top,
                         containerOffsetTop = $droppable.offset().top,
                         containerHeight = $droppable.outerHeight(),
-                        containerWorkspace = containerHeight - (ui.helper.outerHeight() / 2),
+                        containerWorkspace = containerHeight - Math.round(ui.helper.outerHeight() / 2),
                         movePosition,
                         pointerOffset = {left: that.manager.$tree.offset().left + 5 };
 
@@ -496,11 +509,12 @@
                         pointerOffset.top = (containerOffsetTop + 3); 
                     } else if (draggableOffsetTop  <= (containerWorkspace * 0.7)) {
                         movePosition = 'lastChild';
-                        pointerOffset.top = containerOffsetTop + Math.round(containerWorkspace / 2);
+                        pointerOffset.top = containerOffsetTop + (containerWorkspace / 2);
                     } else {
                         movePosition = 'after';
                         pointerOffset.top = containerOffsetTop + containerWorkspace;
                     }                    
+                    pointerOffset.top += 2;
                     return {
                         position: movePosition,
                         pointerOffset: pointerOffset
@@ -519,8 +533,8 @@
                         handle: '.'+ that.manager.options.classes.handleIcon,
                         start: function (e) {
                             if (!$.browser.webkit) {
-								$(this).data("bs.gtreetable.gtreetablenode.scrollTop", $(window).scrollTop());
-							}
+                                $(this).data("bs.gtreetable.gtreetablenode.scrollTop", $(window).scrollTop());
+                            }
                         },
                         stop: function (e) {
                             that.manager.isNodeDragging(false);
@@ -571,7 +585,7 @@
         save: function () {
             var oNode = this;
             if ($.isFunction(oNode.manager.options.onSave)) {
-                $.when(oNode.manager.options.onSave(oNode)).done(function (data) {
+                $.when($.ajax(oNode.manager.options.onSave(oNode))).done(function (data) {
                     oNode._save(data);
                 });
             } else {
@@ -624,7 +638,8 @@
                 }
             },options);
 
-            $.when(this.manager.getSourceNodes(oNode.id, settings.isAltPressed)).done(function (data) {
+            $.when(this.manager.getSourceNodes(oNode.id, settings.isAltPressed)).done(function (result) {
+                var data = result[oNode.manager.options.nodesWrapper];
                 for(var x in data) {
                     var newNode = new GTreeTableNode(data[x], oNode.manager);
                     oNode.insertIntegral(newNode, prevNode);
@@ -693,8 +708,9 @@
         
         insert: function (position, oRelatedNode) {
             var oNode = this,
-				oLastChild,
-				oContext;
+                oLastChild,
+                oContext;
+        
             if (position === 'before') {
                 oRelatedNode.$node.before(oNode.$node);
             } else if (position === 'after') {
@@ -727,7 +743,7 @@
             var oNode = this;
 
             if (oNode.isSaved() && $.isFunction(oNode.manager.options.onDelete)) {
-                $.when(oNode.manager.options.onDelete(oNode)).done(function () {
+                $.when($.ajax(oNode.manager.options.onDelete(oNode))).done(function () {
                     oNode._remove();
                 });
             } else {
@@ -781,7 +797,7 @@
             }
             
             if ($.isFunction(oNode.manager.options.onMove)) {
-                $.when(oNode.manager.options.onMove(oNode, oDestination, position)).done(function (data) {
+                $.when($.ajax(oNode.manager.options.onMove(oNode, oDestination, position))).done(function (data) {
                     oNode._move(oDestination, position); 
                 });
             } else {
@@ -1145,18 +1161,19 @@
     $.fn.gtreetable.Constructor = GTreeTable;
 
     $.fn.gtreetable.defaults = {
+        nodesWrapper: 'nodes',
         nodeIndent: 16,
         language: 'en',
         inputWidth: '60%',
         cache: 2,
         readonly: false,
-        multiselect: false,
+        selectLimit: 1,
         manyroots: false,
         draggable: false,
         dragCanExpand: false,
         showExpandIconOnEmpty: false,        
         languages: {
-            en: {
+            'en-US': {
                 save: 'Save',
                 cancel: 'Cancel',
                 action: 'Action',
@@ -1178,25 +1195,25 @@
         },
         defaultActions: [
             {
-                name: '{createBefore}',
+                name: '${createBefore}',
                 event: function (oNode, oManager) {
                     oNode.add('before', 'default');
                 }
             },
             {
-                name: '{createAfter}',
+                name: '${createAfter}',
                 event: function (oNode, oManager) {
                     oNode.add('after', 'default');
                 }
             },
             {
-                name: '{createFirstChild}',
+                name: '${createFirstChild}',
                 event: function (oNode, oManager) {
                     oNode.add('firstChild', 'default');
                 }
             },
             {
-                name: '{createLastChild}',
+                name: '${createLastChild}',
                 event: function (oNode, oManager) {
                     oNode.add('lastChild', 'default');
                 }
@@ -1205,13 +1222,13 @@
                 divider: true
             },
             {
-                name: '{update}',
+                name: '${update}',
                 event: function (oNode, oManager) {
                     oNode.makeEditable();
                 }
             },
             {
-                name: '{delete}',
+                name: '${delete}',
                 event: function (oNode, oManager) {
                     if (confirm(oManager.language.messages.onDelete)) {
                         oNode.remove();
