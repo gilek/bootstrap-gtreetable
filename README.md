@@ -360,6 +360,9 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
       "type": "node type" 
     }
     ```
++ `template` (String)
+
++ `templateParts` (Object) 
 
 + `types` (Object) - object consists relations between node types and its icon class i.e.
 
