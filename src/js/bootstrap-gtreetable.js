@@ -35,7 +35,7 @@
            '</tr>' +
            '</table>';            
 
-        this.templateParts = this.options.templateParts !== undefined ? this.options.templateParts :
+        this.templateParts = $.extend({},
             {
                 draggableIcon: this.options.draggable === true ? '<span class="' + this.options.classes.handleIcon + '">&zwnj;</span><span class="' + this.options.classes.draggablePointer + '">&zwnj;</span>'  : '',
                 indent: '<span class="' + this.options.classes.indent + '">&zwnj;</span>',
@@ -48,7 +48,7 @@
                 cancelButton: '<button type="button" class="btn btn-sm ' + this.options.classes.cancelButton + '">' + lang.cancel + '</button>',
                 actionsButton: '<button type="button" class="btn btn-sm btn-default dropdown-toggle node-actions" data-toggle="dropdown">' + lang.action + ' <span class="caret"></span></button>',
                 actions: ''
-            };
+            }, this.options.templateParts);
             
         if (this.actions.length > 0) {
             var templateActions = '<ul class="dropdown-menu" role="menu">' +
