@@ -397,7 +397,7 @@
             this.$node.attr('data-parent', this.parent);
             this.$node.attr('data-level', this.level);
 
-            this.$indent.css('marginLeft', (parseInt(this.level) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
+            this.$indent.css('marginLeft', ((parseInt(this.level) - this.manager.options.rootLevel) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
             
             if (this.type !== undefined && this.manager.options.types && this.manager.options.types[this.type] !== undefined) {
                 this.$typeIcon.addClass(this.manager.options.types[this.type]).show();
@@ -665,7 +665,7 @@
                 childPosition = (position === 'lastChild' || position === 'firstChild'),
                 oNewNode = new GTreeTableNode({
                     level: oTriggerNode.level + (childPosition ? 1 : 0),
-                    parent: oTriggerNode.level === 1 && !childPosition ? 0 : (childPosition ? oTriggerNode.id : oTriggerNode.parent),
+                    parent: oTriggerNode.level === this.manager.options.rootLevel && !childPosition ? 0 : (childPosition ? oTriggerNode.id : oTriggerNode.parent),
                     type: type
                 },this.manager),
                 canAddData = this._canAdd(oNewNode);
@@ -1160,6 +1160,7 @@
         cache: 2,
         readonly: false,
         selectLimit: 1,
+        rootLevel: 0,        
         manyroots: false,
         draggable: false,
         dragCanExpand: false,
