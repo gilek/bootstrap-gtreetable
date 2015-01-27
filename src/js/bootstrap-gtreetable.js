@@ -11,8 +11,14 @@
         this._lastId = 0;
         
         this.actions = [];
+        this.buttons = [];
+
         if (this.options.defaultActions !== null) {
             this.actions = this.options.defaultActions;
+        }
+
+        if(this.options.buttons !== undefined ) {
+            this.buttons = this.options.buttons;
         }
 
         if (this.options.actions !== undefined) {
@@ -33,7 +39,7 @@
            '<div class="btn-group pull-right">${actionsButton}${actions}</div>' +
            '</td>' +
            '</tr>' +
-           '</table>';            
+           '</table>';
 
         this.templateParts = $.extend({},
             {
@@ -47,8 +53,18 @@
                 saveButton: '<button type="button" class="btn btn-sm btn-primary ' + this.options.classes.saveButton + '">' + lang.save + '</button>',
                 cancelButton: '<button type="button" class="btn btn-sm ' + this.options.classes.cancelButton + '">' + lang.cancel + '</button>',
                 actionsButton: '<button type="button" class="btn btn-sm btn-default dropdown-toggle node-actions" data-toggle="dropdown">' + lang.action + ' <span class="caret"></span></button>',
-                actions: ''
+                actions: '',
+                buttons: ''
             }, this.options.templateParts);
+        
+        if(this.buttons.length > 0 ) {
+            buttonsTemplate = '';
+            $.each(this.buttons, function(index,object){
+                buttonsTemplate += '<a type="button" class="btn btn-sm btn-default node-actions node-button-' + index + '" tabindex="-1">'+object.name+'</a>';
+            });
+
+            this.templateParts.actionsButton += buttonsTemplate;
+        }
             
         if (this.actions.length > 0) {
             var templateActions = '<ul class="dropdown-menu" role="menu">' +
@@ -372,6 +388,7 @@
             this.$typeIcon = this.$node.find('.' + this.manager.options.classes.typeIcon);
             this.$icon = this.$node.find('.' + this.manager.options.classes.icon);
             this.$action = this.$node.find('.' + this.manager.options.classes.action);
+            this.$button = this.$node.find('.' + this.manager.options.classes.button);
             this.$indent = this.$node.find('.' + this.manager.options.classes.indent);
             this.$saveButton = this.$node.find('.' + this.manager.options.classes.saveButton);
             this.$cancelButton = this.$node.find('.' + this.manager.options.classes.cancelButton);      
@@ -463,6 +480,7 @@
                     that.collapse();
                 }
             });
+
             if (that.manager.options.dragCanExpand === true) {
                 this.$ceIcon.mouseover(function (e) {
                     if (that.manager.options.draggable === true && that.manager.isNodeDragging() === true) {
@@ -478,6 +496,13 @@
                     action.event(that, that.manager);
                 });
             });
+
+            $.each(this.manager.buttons, function (index, button) {
+                that.$node.find('.' + that.manager.options.classes.button + '-' + index).click(function (event) {
+                    button.event(that, that.manager);
+                });
+            });
+
 
             this.$saveButton.click(function () {
                 that.save();
@@ -1248,6 +1273,7 @@
             typeIcon: 'node-icon-type',
             handleIcon : 'node-icon-handle',
             action: 'node-action',
+            button: 'node-button',
             indent: 'node-indent',
             saveButton: 'node-save',
             cancelButton: 'node-cancel'
