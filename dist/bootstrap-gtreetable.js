@@ -1,5 +1,5 @@
 /* ========================================================= 
- * bootstrap-gtreetable v2.2.0-alpha
+ * bootstrap-gtreetable v2.2.1-alpha
  * https://github.com/gilek/bootstrap-gtreetable
  * ========================================================= 
  * Copyright 2014 Maciej Kłak
@@ -38,12 +38,12 @@
            '<td>' +
            '<span>${draggableIcon}${indent}${ecIcon}${selectedIcon}${typeIcon}${name}</span>' +
            '<span class="hide ' + this.options.classes.action + '">${input}${saveButton} ${cancelButton}</span>' +
-           '<div class="btn-group pull-right">${actionsButton}${actions}</div>' +
+           '<div class="btn-group pull-right ' + this.options.classes.buttons + '">${actionsButton}${actionsList}</div>' +
            '</td>' +
            '</tr>' +
            '</table>';            
 
-        this.templateParts = $.extend({},
+      this.templateParts = this.options.templateParts !== undefined ? this.options.templateParts :
             {
                 draggableIcon: this.options.draggable === true ? '<span class="' + this.options.classes.handleIcon + '">&zwnj;</span><span class="' + this.options.classes.draggablePointer + '">&zwnj;</span>'  : '',
                 indent: '<span class="' + this.options.classes.indent + '">&zwnj;</span>',
@@ -54,27 +54,27 @@
                 input: '<input type="text" name="name" value="" style="width: ' + this.options.inputWidth + '" class="form-control" />',
                 saveButton: '<button type="button" class="btn btn-sm btn-primary ' + this.options.classes.saveButton + '">' + lang.save + '</button>',
                 cancelButton: '<button type="button" class="btn btn-sm ' + this.options.classes.cancelButton + '">' + lang.cancel + '</button>',
-                actionsButton: '<button type="button" class="btn btn-sm btn-default dropdown-toggle node-actions" data-toggle="dropdown">' + lang.action + ' <span class="caret"></span></button>',
-                actions: ''
-            }, this.options.templateParts);
+                actionsButton: '<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">' + lang.action + ' <span class="caret"></span></button>',
+                actionsList: ''
+            };
             
         if (this.actions.length > 0) {
-            var templateActions = '<ul class="dropdown-menu" role="menu">' +
+            var templateActionsList = '<ul class="dropdown-menu" role="menu">' +
             '<li role="presentation" class="dropdown-header">' + lang.action + '</li>';
 
             $.each(this.actions, function (index, action) {
                 if (action.divider === true) {
-                    templateActions += '<li class="divider"></li>';
+                    templateActionsList += '<li class="divider"></li>';
                 } 
                 else {
                     var matches = action.name.match(/\$\{([\w\W]+)\}/),
                         name = matches !== null && matches[1] !== undefined && lang.actions[matches[1]] !== undefined ? lang.actions[matches[1]] : action.name;
-                    templateActions += '<li role="presentation"><a href="#notarget" class="node-action-' + index + '" tabindex="-1">' + name + '</a></li>';
+                    templateActionsList += '<li role="presentation"><a href="#notarget" class="node-action-' + index + '" tabindex="-1">' + name + '</a></li>';
                 }
             });        
 
-            templateActions += '</ul>';
-            this.templateParts.actions = templateActions;
+            templateActionsList += '</ul>';
+            this.templateParts.actionsList = templateActionsList;
         }
         
         var template = this.template;
@@ -405,7 +405,7 @@
             this.$node.attr('data-parent', this.parent);
             this.$node.attr('data-level', this.level);
 
-            this.$indent.css('marginLeft', (parseInt(this.level) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
+            this.$indent.css('marginLeft', ((parseInt(this.level) - this.manager.options.rootLevel) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
             
             if (this.type !== undefined && this.manager.options.types && this.manager.options.types[this.type] !== undefined) {
                 this.$typeIcon.addClass(this.manager.options.types[this.type]).show();
@@ -673,7 +673,7 @@
                 childPosition = (position === 'lastChild' || position === 'firstChild'),
                 oNewNode = new GTreeTableNode({
                     level: oTriggerNode.level + (childPosition ? 1 : 0),
-                    parent: oTriggerNode.level === 1 && !childPosition ? 0 : (childPosition ? oTriggerNode.id : oTriggerNode.parent),
+                    parent: oTriggerNode.level === this.manager.options.rootLevel && !childPosition ? 0 : (childPosition ? oTriggerNode.id : oTriggerNode.parent),
                     type: type
                 },this.manager),
                 canAddData = this._canAdd(oNewNode);
@@ -1168,6 +1168,7 @@
         cache: 2,
         readonly: false,
         selectLimit: 1,
+        rootLevel: 0,        
         manyroots: false,
         draggable: false,
         dragCanExpand: false,
@@ -1257,7 +1258,8 @@
             action: 'node-action',
             indent: 'node-indent',
             saveButton: 'node-save',
-            cancelButton: 'node-cancel'
+            cancelButton: 'node-cancel',
+            buttons: 'node-buttons'            
         }
     };
 

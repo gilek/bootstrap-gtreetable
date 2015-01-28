@@ -1,5 +1,5 @@
 /* ========================================================= 
- * bootstrap-gtreetable v2.2.0-alpha
+ * bootstrap-gtreetable v2.2.1-alpha
  * https://github.com/gilek/bootstrap-gtreetable
  * ========================================================= 
  * Copyright 2014 Maciej Kłak
@@ -71,11 +71,11 @@
 .gtreetable .node-draggable.node-hovered .node-icon-handle {
   visibility: visible;
 }
-.gtreetable .node-actions {
+.gtreetable .node-buttons {
   visibility: hidden;
 }
-.gtreetable.gtreetable-fullAccess .node-hovered.node-saved .node-actions,
-.gtreetable.gtreetable-fullAccess .node-selected.node-saved .node-actions {
+.gtreetable.gtreetable-fullAccess .node-hovered.node-saved .node-buttons,
+.gtreetable.gtreetable-fullAccess .node-selected.node-saved .node-buttons {
   visibility: visible;
 }
 .gtreetable .node-selected .node-icon-selected {

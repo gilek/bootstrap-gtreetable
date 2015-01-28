@@ -1,5 +1,5 @@
 /* ========================================================= 
- * bootstrap-gtreetable v2.2.0-alpha
+ * bootstrap-gtreetable v2.2.1-alpha
  * https://github.com/gilek/bootstrap-gtreetable
  * ========================================================= 
  * Copyright 2014 Maciej Kłak
