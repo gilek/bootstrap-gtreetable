@@ -12,8 +12,8 @@
             createAfter: 'Вставить после',
             createFirstChild: 'Создать первого потомка',
             createLastChild: 'Создать последнего потомка',
-            update: 'Обновить',
-            'delete': 'Удалить'
+            update: 'Изменить',
+            delete: 'Удалить'
         },
         messages: {
             onDelete: 'Вы уверены?',
