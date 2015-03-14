@@ -40,7 +40,7 @@
                 '<span>${draggableIcon}${indent}${ecIcon}${selectedIcon}${typeIcon}${name}</span>' +
                 '<span class="hide ' + this.options.classes.action + '">${input}${saveButton} ${cancelButton}</span>' +
                 (this.actions.length + this.buttons.length > 0 ? '<div class="btn-group pull-right">' +
-                        (this.actions.length > 0 ? '${actionsButton}${actions}' : '') +
+                        (this.actions.length > 0 ? '${actionsButton}${actionsList}' : '') +
                         (this.buttons.length > 0 ? '${buttons}' : '') +
                         '</div>' : '') +
                 '</td>' +
@@ -59,13 +59,9 @@
                     saveButton: '<button type="button" class="btn btn-sm btn-primary ' + this.options.classes.saveButton + '">' + lang.save + '</button>',
                     cancelButton: '<button type="button" class="btn btn-sm ' + this.options.classes.cancelButton + '">' + lang.cancel + '</button>',
                     actionsButton: '<button type="button" class="btn btn-sm btn-default dropdown-toggle node-actions" data-toggle="dropdown">' + lang.action + ' <span class="caret"></span></button>',
-                    actions: '',
+                    actionsList: '',
                     buttons: ''
                 }, this.options.templateParts);
-
-        if (this.buttons.length > 0 || this.actions.length > 0) {
-
-        }
 
         if (this.buttons.length > 0) {
             var buttonsTemplate = '';
@@ -79,22 +75,22 @@
 
         if (this.actions.length > 0) {
 
-            var templateActions = '<ul class="dropdown-menu" role="menu">' +
+            var templateActionsList = '<ul class="dropdown-menu" role="menu">' +
                     '<li role="presentation" class="dropdown-header">' + lang.action + '</li>';
 
             $.each(this.actions, function (index, action) {
                 if (action.divider === true) {
-                    templateActions += '<li class="divider"></li>';
+                    templateActionsList += '<li class="divider"></li>';
                 }
                 else {
                     var matches = action.name.match(/\$\{([\w\W]+)\}/),
                             name = matches !== null && matches[1] !== undefined && lang.actions[matches[1]] !== undefined ? lang.actions[matches[1]] : action.name;
-                    templateActions += '<li role="presentation"><a href="#notarget" class="node-action-' + index + '" tabindex="-1">' + name + '</a></li>';
+                    templateActionsList += '<li role="presentation"><a href="#notarget" class="node-action-' + index + '" tabindex="-1">' + name + '</a></li>';
                 }
             });
 
-            templateActions += '</ul>';
-            this.templateParts.actions = templateActions;
+            templateActionsList += '</ul>';
+            this.templateParts.actionsList = templateActionsList;
         }
 
         var template = this.template;
