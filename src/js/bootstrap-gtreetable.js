@@ -972,12 +972,14 @@
                 this.isEditable(true);
                 this.$input.val(this.name);
                 this.$name.addClass('hide');
+                this.$about.addClass('hide');
                 this.$action.removeClass('hide');
                 //TODO nie dziala zawsze
                 this.$input.focus();
             } else {
                 this.isEditable(false);
                 this.$name.removeClass('hide');
+                this.$about.removeClass('hide');
                 this.$action.addClass('hide');
             }
         }
