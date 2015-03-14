@@ -68,8 +68,11 @@
             var buttonsTemplate = '';
             $.each(this.buttons, function (index, object) {
                 var icon = !!object.icon ? '<i class="' + object.icon + '"></i> ' : '';
-                buttonsTemplate += '<a type="button" class="btn btn-sm btn-default node-actions node-button-' + index + '" tabindex="-1">'
-                        + icon + (!!object.name ? object.name : '') + '</a>';
+                var title = !!object.title ? 'title="' + object.title + '"' : '';
+                buttonsTemplate += '<a type="button" ' + title + ' class="btn btn-sm node-actions node-button-' + 
+                        index + (!!object.class ? ' ' + object.class : '') + 
+                        '" tabindex="-1">'+ icon + (!!object.name ? object.name : '') + 
+                        '</a>';
             });
             this.templateParts.buttonsList += buttonsTemplate;
         }
@@ -393,13 +396,13 @@
         },
         render: function () {
             this.$name.html(this.name);
-            
-            if(this.about !== '') {
+
+            if (this.about !== '') {
                 this.$about.html(this.about);
-            } else{
+            } else {
                 this.$about.remove();
             }
-            
+
             if (this.id !== undefined) {
                 this.$node.attr('data-id', this.id);
                 this.isSaved(true);
