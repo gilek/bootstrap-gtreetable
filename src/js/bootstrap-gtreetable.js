@@ -100,14 +100,10 @@
         var template = this.template;
 
         $.each(this.templateParts, function (index, value) {
-
-            console.log(index, value);
             template = template.replace('${' + index + '}', value);
         });
 
-
         this.options.template = template;
-
 
         if (this.$tree.find('tbody').length === 0) {
             this.$tree.append('<tbody></tbody>');
@@ -229,6 +225,8 @@
         this.name = data.name;
         this.type = data.type;
         this.id = data.id;
+        this.data = data.data || {};
+
 
         this.insertPosition = undefined;
         this.movePosition = undefined;
@@ -407,6 +405,14 @@
             }
             this.$node.attr('data-parent', this.parent);
             this.$node.attr('data-level', this.level);
+
+            if (typeof this.data == 'object') {
+                for (var property in this.data) {
+                    if (this.data.hasOwnProperty(property)) {
+                        this.$node.attr('data-' + property, this.data[property]);
+                    }
+                }
+            }
 
             this.$indent.css('marginLeft', ((parseInt(this.level) - this.manager.options.rootLevel) * this.manager.options.nodeIndent) + 'px').html('&zwnj;');
 
