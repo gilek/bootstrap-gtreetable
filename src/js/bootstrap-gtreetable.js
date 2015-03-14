@@ -37,7 +37,7 @@
                 '<table class="table gtreetable">' +
                 '<tr class="' + this.options.classes.node + ' ' + this.options.classes.collapsed + '">' +
                 '<td>' +
-                '<span>${draggableIcon}${indent}${ecIcon}${selectedIcon}${typeIcon}${name}</span>' +
+                '<span>${draggableIcon}${indent}${ecIcon}${selectedIcon}${typeIcon}${name} ${about}</span>' +
                 '<span class="hide ' + this.options.classes.action + '">${input}${saveButton} ${cancelButton}</span>' +
                 (this.actions.length + this.buttons.length > 0 ? '<div class="btn-group pull-right">' +
                         (this.actions.length > 0 ? '${actionsButton}${actionsList}' : '') +
@@ -55,6 +55,7 @@
                     selectedIcon: '<span class="' + this.options.classes.selectedIcon + ' icon"></span>',
                     typeIcon: '<span class="' + this.options.classes.typeIcon + '"></span>',
                     name: '<span class="' + this.options.classes.name + '"></span>',
+                    about: '<span class="' + this.options.classes.about + '"></span>',
                     input: '<input type="text" name="name" value="" style="width: ' + this.options.inputWidth + '" class="form-control" />',
                     saveButton: '<button type="button" class="btn btn-sm btn-primary ' + this.options.classes.saveButton + '">' + lang.save + '</button>',
                     cancelButton: '<button type="button" class="btn btn-sm ' + this.options.classes.cancelButton + '">' + lang.cancel + '</button>',
@@ -68,7 +69,7 @@
             $.each(this.buttons, function (index, object) {
                 var icon = !!object.icon ? '<i class="' + object.icon + '"></i> ' : '';
                 buttonsTemplate += '<a type="button" class="btn btn-sm btn-default node-actions node-button-' + index + '" tabindex="-1">'
-                        + icon + object.name + '</a>';
+                        + icon + (!!object.name ? object.name : '') + '</a>';
             });
             this.templateParts.buttonsList += buttonsTemplate;
         }
@@ -220,9 +221,9 @@
         this.parent = data.parent;
         this.name = data.name;
         this.type = data.type;
+        this.about = data.about || '';
         this.id = data.id;
         this.data = data.data || {};
-
 
         this.insertPosition = undefined;
         this.movePosition = undefined;
@@ -373,6 +374,7 @@
         init: function () {
             this.$node = this.manager.$nodeTemplate.clone(false);
             this.$name = this.$node.find('.' + this.manager.options.classes.name);
+            this.$about = this.$node.find('.' + this.manager.options.classes.about);
             this.$ceIcon = this.$node.find('.' + this.manager.options.classes.ceIcon);
             this.$typeIcon = this.$node.find('.' + this.manager.options.classes.typeIcon);
             this.$icon = this.$node.find('.' + this.manager.options.classes.icon);
@@ -391,6 +393,13 @@
         },
         render: function () {
             this.$name.html(this.name);
+            
+            if(this.about !== '') {
+                this.$about.html(this.about);
+            } else{
+                this.$about.remove();
+            }
+            
             if (this.id !== undefined) {
                 this.$node.attr('data-id', this.id);
                 this.isSaved(true);
@@ -399,6 +408,7 @@
                     this.$node.addClass(this.manager.options.classes.draggable);
                 }
             }
+
             this.$node.attr('data-parent', this.parent);
             this.$node.attr('data-level', this.level);
 
@@ -1229,6 +1239,7 @@
             draggableContainer: 'node-draggable-container',
             saved: 'node-saved',
             name: 'node-name',
+            about: 'node-about',
             icon: 'node-icon',
             selectedIcon: 'node-icon-selected',
             ceIcon: 'node-icon-ce',
