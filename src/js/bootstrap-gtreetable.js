@@ -41,7 +41,7 @@
                 '<span class="hide ' + this.options.classes.action + '">${input}${saveButton} ${cancelButton}</span>' +
                 (this.actions.length + this.buttons.length > 0 ? '<div class="btn-group pull-right">' +
                         (this.actions.length > 0 ? '${actionsButton}${actionsList}' : '') +
-                        (this.buttons.length > 0 ? '${buttons}' : '') +
+                        (this.buttons.length > 0 ? '${buttonsList}' : '') +
                         '</div>' : '') +
                 '</td>' +
                 '</tr>' +
@@ -60,7 +60,7 @@
                     cancelButton: '<button type="button" class="btn btn-sm ' + this.options.classes.cancelButton + '">' + lang.cancel + '</button>',
                     actionsButton: '<button type="button" class="btn btn-sm btn-default dropdown-toggle node-actions" data-toggle="dropdown">' + lang.action + ' <span class="caret"></span></button>',
                     actionsList: '',
-                    buttons: ''
+                    buttonsList: ''
                 }, this.options.templateParts);
 
         if (this.buttons.length > 0) {
@@ -70,7 +70,7 @@
                 buttonsTemplate += '<a type="button" class="btn btn-sm btn-default node-actions node-button-' + index + '" tabindex="-1">'
                         + icon + object.name + '</a>';
             });
-            this.templateParts.buttons += buttonsTemplate;
+            this.templateParts.buttonsList += buttonsTemplate;
         }
 
         if (this.actions.length > 0) {
