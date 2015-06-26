@@ -710,6 +710,9 @@
                 if (oRelatedNode.isExpanded()) {
                     oLastChild = oRelatedNode.getDescendants({ depth: 1, index: -1, includeNotSaved: true });
                     oContext = oLastChild === undefined ? oContext : oLastChild;
+                    if (oContext === oLastChild && oContext.isExpanded()) {
+                       oLastChild.collapse();
+                    }
                 }
                 oContext.$node.after(oNode.$node);
             } else if (position === 'firstChild') {
@@ -717,6 +720,13 @@
             } else if (position === 'lastChild') {
                 oLastChild = oRelatedNode.getDescendants({ depth: 1, index: -1, includeNotSaved: true });
                 oContext = oLastChild === undefined ? oRelatedNode : oLastChild;
+                if (oContext.isExpanded()) {
+                    oLastGrandChild = oContext.getDescendants({ depth: 1, index: -1, includeNotSaved: true });
+                    oContext = oLastGrandChild === undefined ? oContext : oLastGrandChild;
+                    if (oContext === oLastGrandChild && oContext.isExpanded()) {
+                       oLastGrandChild.collapse();
+                    }
+                }
                 oContext.$node.after(oNode.$node);
             } else {
                 throw "Wrong position.";
