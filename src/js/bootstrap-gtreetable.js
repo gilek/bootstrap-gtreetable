@@ -406,7 +406,8 @@
         
         attachEvents: function () {
             var that = this,
-                selectLimit = parseInt(this.manager.options.selectLimit);
+                selectLimit = parseInt(this.manager.options.selectLimit),
+                preventUnselectOne = parseInt(this.manager.options.preventUnselectOne);
             
             this.$node.mouseover(function () {
                 if (!(that.manager.options.draggable === true && that.manager.isNodeDragging() === true)) {
@@ -423,12 +424,17 @@
 
             if (isNaN(selectLimit) === false && (selectLimit > 0 || selectLimit === -1) ) {
                 this.$name.click(function (e) {
-                    if (that.isSelected()) {
+                    var preventUnselectCheck = 0;
+                    if (selectLimit === 1 && isNaN(preventUnselectOne) === false && preventUnselectOne > 0) {
+                        preventUnselectCheck = preventUnselectOne;
+                    }
+
+                    if (that.isSelected() && preventUnselectCheck === 0 ) {
                         if ($.isFunction(that.manager.options.onUnselect)) {
                             that.manager.options.onUnselect(that);
                         }
                         that.isSelected(false);
-                    } else {
+                    } else if ( !that.isSelected() || preventUnselectCheck === 2 ) {
                         var selectedNodes = that.manager.getSelectedNodes();
                         if (selectLimit === 1 && selectedNodes.length === 1) {
                             selectedNodes[0].isSelected(false);
@@ -1160,6 +1166,7 @@
         cache: 2,
         readonly: false,
         selectLimit: 1,
+        preventUnselectOne: 0,
         rootLevel: 0,        
         manyroots: false,
         draggable: false,

@@ -325,6 +325,11 @@ There is possibility to force refesh data by pushing <kbd>Alt</kbd> in the momen
   + 0 - selection disabled,
   + -1 - unlimited selection.    
 
++ `preventUnselectOne` (Integer) - Depending on `selectLimit` parameter. Work only if `selectLimit` = 1. Define whether it's possible to unselect node if `selectLimit` = 1.
+  + 0 (default) - can unselect
+  + 1 - unselect not happening.
+  + 2 - Similarly repeat select action with execute `onSelect` if defined. 
+
 + `nodeIndent` (Integer) - Distance between node and its container. The value is multiplied, depending on node level.
 
 + `nodeLevel` (Integer)
