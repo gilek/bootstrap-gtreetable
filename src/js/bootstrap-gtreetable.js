@@ -424,10 +424,13 @@
             if (isNaN(selectLimit) === false && (selectLimit > 0 || selectLimit === -1) ) {
                 this.$name.click(function (e) {
                     if (that.isSelected()) {
+                        var canUnselected = true;
                         if ($.isFunction(that.manager.options.onUnselect)) {
-                            that.manager.options.onUnselect(that);
+                            canUnselected = that.manager.options.onUnselect(that);
                         }
-                        that.isSelected(false);
+                        if (canUnselected) {
+                            that.isSelected(false);
+                        }
                     } else {
                         var selectedNodes = that.manager.getSelectedNodes();
                         if (selectLimit === 1 && selectedNodes.length === 1) {
