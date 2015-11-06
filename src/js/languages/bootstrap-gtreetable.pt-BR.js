@@ -1,5 +1,5 @@
 (function( $ ) {
-    $.fn.gtreetable.defaults.languages.pl = {
+    $.fn.gtreetable.defaults.languages['pt-BR'] = {
         save: 'Salvar',
         cancel: 'Cancelar',
         action: 'Ações',
