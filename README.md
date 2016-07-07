@@ -12,7 +12,7 @@ Test available on [demo project](http://gtreetable2.gilek.net).
 
 ## Enviroment
 
-Till now aplication was test on following browsers:
+Till now application was test on following browsers:
 
 + Mozilla Firefox 30,
 + Chrome 37,
