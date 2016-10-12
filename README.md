@@ -155,7 +155,7 @@ jQuery('#gtreetable').gtreetable({
   'onMove': function (oSource, oDestination, position) {
     return {
       type: 'POST',
-      url: 'nodeMove?id=' + oNode.getId(),
+      url: 'nodeMove?id=' + oSource.getId(),
       data: {
         related: oDestination.getId(),
         position: position
