@@ -524,7 +524,7 @@
                         cursorAt: {top:0, left: 0 },
                         handle: '.'+ that.manager.options.classes.handleIcon,
                         start: function (e) {
-                            if (!$.browser.webkit) {
+                            if (!CSS.supports("( -webkit-box-reflect:unset )")) {
                                 $(this).data("bs.gtreetable.gtreetablenode.scrollTop", $(window).scrollTop());
                             }
                         },
@@ -532,7 +532,7 @@
                             that.manager.isNodeDragging(false);
                         },
                         drag: function (e, ui) {
-                            if (!$.browser.webkit) {
+                            if (!CSS.supports("( -webkit-box-reflect:unset )")) {
                                 var strollTop =  $(window).scrollTop(),
                                     delta = ($(this).data("bs.gtreetable.gtreetablenode.scrollTop") - strollTop);
 
